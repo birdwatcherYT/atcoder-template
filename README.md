@@ -6,6 +6,8 @@ atcoderのABC用C++テンプレ
     - ファイル名にスペースを含まないようにする
 - `make`でディレクトリ内のすべてのcppファイルをそれぞれコンパイル
 
+`./AtCoderBeginnersSelection/`に[AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例を掲載
+
 ## 機能
 ### `vector<T>`の`ostream`/`istream`に対して演算子`<<`/`>>`を定義
 ```c++
