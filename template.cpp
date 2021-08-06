@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
+#include <stack>
 #include <numeric>
 #include <cassert>
 // #include <bits/stdc++.h>
@@ -27,10 +28,11 @@
 #define EXIST(s, e) ((s).find(e) != (s).end())
 #define SORT(v) sort((v).begin(), (v).end())
 #define RSORT(v) sort((v).rbegin(), (v).rend())
-#define SUM(v, type) accumulate((v).begin(), (v).end(), (type)0)
+#define SUM(v, type) accumulate((v).begin(), (v).end(), (type) 0)
 #define CTOI(c) (c - '0')
-#define HEADSTR(str, n) str.substr(0, n)
-#define TAILSTR(str, n) str.substr(str.length() - n)
+#define HEADSTR(str, n) str.substr(0, (n))
+#define TAILSTR(str, n) str.substr((str).length() - (n))
+#define INSPOS(v, a) (lower_bound((vec).begin(), (vec).end(), a) - (vec).begin())
 
 // io系
 #define OUT(x) cout << (x) << endl;
@@ -46,6 +48,18 @@ typedef vector<string> VS;
 typedef pair<int, int> PII;
 typedef set<int> SI;
 typedef long long LL;
+
+template<class T1, class T2>
+ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
+	os << "(" << p.first << ", " << p.second << ")";
+	return os;
+}
+
+template<class T1, class T2>
+istream& operator>>(istream& is, pair<T1, T2>& p) {
+	is >> p.first >> p.second;
+	return is;
+}
 
 template<class T>
 ostream& operator<<(ostream& os, const vector<T>& vec) {
