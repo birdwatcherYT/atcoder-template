@@ -46,10 +46,10 @@
 
 using namespace std;
 
-template<class T> vector<size_t> argsort(const vector<T> &vec){
+template<class T> vector<size_t> argsort(const vector<T> &vec, bool asc=true){
 	vector<size_t> index(vec.size());
 	iota(index.begin(), index.end(), 0);
-	sort(index.begin(), index.end(), [&vec](size_t i, size_t j){return vec[i] < vec[j];});
+	sort(index.begin(), index.end(), [&vec, &asc](size_t i, size_t j){return asc ? (vec[i] < vec[j]):(vec[i] > vec[j]);});
 	return index;
 }
 // 表示系
