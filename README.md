@@ -14,6 +14,7 @@ atcoderのABC用C++テンプレ
     - 深さ優先（by スタック）
     - 深さ優先（by 再帰）
     - UnionFind
+- コンパイル後に自動的に実行するようにするにはMakefileの`# ./$@`のコメントアウトを外す
 
 `./AtCoderBeginnersSelection/`に[AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例を掲載
 

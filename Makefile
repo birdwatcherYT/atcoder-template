@@ -15,6 +15,7 @@ run:$(TARGETS) $(OBJECTS)
 
 %.exe: %.o
 	$(CXX) -o $@ $< $(LDFLAGS)
+	# ./$@
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
