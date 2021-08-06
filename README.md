@@ -41,7 +41,7 @@ REP(i, 3)
 ```
 使えないコンパイラでは無視される
 
-## [ac-library](https://atcoder.github.io/ac-library/document_ja/index.html)を使う
+## [ac-library](https://atcoder.github.io/ac-library/document_ja/index.html)を使う場合
 1. [ac-library](https://github.com/atcoder/ac-library/releases)をダウンロードしてくる
 2. zipを展開して`ac-library`をcppと同じ階層に置く
 3. `Makefile`の以下のコメントアウトを外す
