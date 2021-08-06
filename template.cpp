@@ -1,5 +1,4 @@
 #pragma GCC optimize("O3")
-
 // #include <atcoder/all>
 #include <iostream>
 #include <sstream>
@@ -16,7 +15,6 @@
 #include <numeric>
 #include <cassert>
 // #include <bits/stdc++.h>
-
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
@@ -33,7 +31,6 @@
 #define HEADSTR(str, n) str.substr(0, (n))
 #define TAILSTR(str, n) str.substr((str).length() - (n))
 #define INSPOS(v, a) (lower_bound((vec).begin(), (vec).end(), a) - (vec).begin())
-
 // io系
 #define OUT(x) cout << (x) << endl;
 #define IN(x) cin >> x;
@@ -48,43 +45,44 @@ typedef vector<string> VS;
 typedef pair<int, int> PII;
 typedef set<int> SI;
 typedef long long LL;
-
-template<class T1, class T2>
-ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
+// 表示系
+template <class Head> void print(Head&& head) {
+	cout << head << endl;
+}
+template <class Head, class... Tail> void print(Head&& head, Tail&&... tail) {
+	cout << head << " ";
+	print(forward<Tail>(tail)...);
+}
+template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
 	os << "(" << p.first << ", " << p.second << ")";
 	return os;
 }
-
-template<class T1, class T2>
-istream& operator>>(istream& is, pair<T1, T2>& p) {
-	is >> p.first >> p.second;
-	return is;
-}
-
-template<class T>
-ostream& operator<<(ostream& os, const vector<T>& vec) {
+template<class T> ostream& operator<<(ostream& os, const vector<T>& vec) {
 	os << "[ ";
-	for ( const T& item : vec )
-		os << item << ' ';
+	for ( const T& item : vec ) os << item << ", ";
 	os << "]";
 	return os;
 }
-
-template<class T>
-istream& operator>>(istream& is, vector<T>& vec) {
-	for ( T& item : vec )
-		is >> item;
+template<class T> ostream& operator<<(ostream& os, const set<T>& s) {
+	os << "{ ";
+	for ( const T& item : s ) os << item << ", ";
+	os << "}";
+	return os;
+}
+template<class T1, class T2> ostream& operator<<(ostream& os, const map<T1, T2>& m) {
+	os << "{ ";
+	for ( const auto &[key, value] : m ) os << key << ":"<< value << ", ";
+	os << "}";
+	return os;
+}
+// 入力系
+template<class T1, class T2> istream& operator>>(istream& is, pair<T1, T2>& p) {
+	is >> p.first >> p.second;
 	return is;
 }
-
-template <class Head>
-void print(Head&& head) {
-	cout << head << endl;
-}
-template <class Head, class... Tail>
-void print(Head&& head, Tail&&... tail) {
-	cout << head << " ";
-	print(forward<Tail>(tail)...);
+template<class T> istream& operator>>(istream& is, vector<T>& vec) {
+	for ( T& item : vec ) is >> item;
+	return is;
 }
 
 // int -> str: to_string(i)
