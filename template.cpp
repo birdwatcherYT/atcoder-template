@@ -12,6 +12,7 @@
 #include <string>
 #include <queue>
 #include <numeric>
+#include <cassert>
 // #include <bits/stdc++.h>
 
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
@@ -25,7 +26,11 @@
 #define EXIST(s, e) ((s).find(e) != (s).end())
 #define SORT(v) sort((v).begin(), (v).end())
 #define RSORT(v) sort((v).rbegin(), (v).rend())
+#define SUM(v, type) accumulate((v).begin(), (v).end(), (type)0)
 #define CTOI(c) (c - '0')
+#define HEADSTR(str, n) str.substr(0, n)
+#define TAILSTR(str, n) str.substr(str.length() - n)
+
 // io系
 #define OUT(x) cout << (x) << endl;
 #define IN(x) cin >> x;
@@ -57,8 +62,19 @@ istream& operator>>(istream& is, vector<T>& vec) {
 	return is;
 }
 
-// int -> str: to_string
-// str -> int: stoi
+template <class Head>
+void print(Head&& head) {
+	cout << head << endl;
+}
+template <class Head, class... Tail>
+void print(Head&& head, Tail&&... tail) {
+	cout << head << " ";
+	print(forward<Tail>(tail)...);
+}
+
+// int -> str: to_string(i)
+// str -> int: stoi(s)
+// vec -> set: set<int> s(ALL(v));
 int main() {
 	// in
 	int n;
@@ -70,5 +86,6 @@ int main() {
 	OUT(n)
 	OUT(nums)
 
+	print(1,2,3,4,5);
 	return 0;
 }
