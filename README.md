@@ -5,8 +5,18 @@ atcoderのABC用C++テンプレ
 - `template.cpp`を問題 (A,B,C, ...)ごとにコピーして使う
     - ファイル名にスペースを含まないようにする
 - `make`でディレクトリ内のすべてのcppファイルをそれぞれコンパイル
+- `tools.cpp`必要に応じてコピペして使える関数を実装
+    - $a^n \mathrm{\ mod\ } m$
+    - ${}_nC_r$
+    - ${}_nC_r \mathrm{\ mod\ } m$
+    - ダイクストラ（by 優先度付きキュー）
+    - 幅優先（by キュー）
+    - 深さ優先（by スタック）
+    - 深さ優先（by 再帰）
+    - UnionFind
 
 `./AtCoderBeginnersSelection/`に[AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例を掲載
+
 
 ## 機能
 ### `vector<T>`の`ostream`/`istream`に対して演算子`<<`/`>>`を定義
