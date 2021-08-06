@@ -8,6 +8,7 @@ CXXFLAGS = -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -std=c++1
 RM       = rm -f
 LDFLAGS  =
 INCLUDE  = 
+# INCLUDE  = -I ac-library
 
 .PHONY:run
 run:$(TARGETS) $(OBJECTS)
