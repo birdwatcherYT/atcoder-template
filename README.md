@@ -6,9 +6,9 @@ atcoderのABC用C++テンプレ
     - ファイル名にスペースを含まないようにする
 - `make`でディレクトリ内のすべてのcppファイルをそれぞれコンパイル
 - `tools.cpp`必要に応じてコピペして使える関数を実装
-    - $a^n \mathrm{\ mod\ } m$
-    - ${}_nC_r$
-    - ${}_nC_r \mathrm{\ mod\ } m$
+    - a^n mod m
+    - nCr
+    - nCr mod m
     - ダイクストラ（by 優先度付きキュー）
     - 幅優先（by キュー）
     - 深さ優先（by スタック）
