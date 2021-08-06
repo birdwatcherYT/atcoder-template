@@ -27,6 +27,13 @@
 #define SORT(v) sort((v).begin(), (v).end())
 #define RSORT(v) sort((v).rbegin(), (v).rend())
 #define SUM(v, type) accumulate((v).begin(), (v).end(), (type) 0)
+#define MIN(v) (*min_element((v).begin(), (v).end()))
+#define MAX(v) (*max_element((v).begin(), (v).end()))
+#define ARGMIN(v) distance((v).begin(), min_element((v).begin(), (v).end()))
+#define ARGMAX(v) distance((v).begin(), max_element((v).begin(), (v).end()))
+#define REVERSE(v) reverse((v).begin(), (v).end())
+#define ARANGE(v) iota((v).begin(), (v).end(), 0)
+#define FILTER(src, tgt, func) copy_if(begin(src), end(src), back_inserter(tgt), func); // func = [](type x){return 条件;}
 #define CTOI(c) (c - '0')
 #define HEADSTR(str, n) str.substr(0, (n))
 #define TAILSTR(str, n) str.substr((str).length() - (n))
@@ -39,12 +46,12 @@
 
 using namespace std;
 
-typedef vector<int> VI;
-typedef vector<VI> VVI;
-typedef vector<string> VS;
-typedef pair<int, int> PII;
-typedef set<int> SI;
-typedef long long LL;
+template<class T> vector<size_t> argsort(const vector<T> &vec){
+	vector<size_t> index(vec.size());
+	iota(index.begin(), index.end(), 0);
+	sort(index.begin(), index.end(), [&vec](size_t i, size_t j){return vec[i] < vec[j];});
+	return index;
+}
 // 表示系
 template <class Head> void print(Head&& head) {
 	cout << head << endl;
@@ -84,6 +91,13 @@ template<class T> istream& operator>>(istream& is, vector<T>& vec) {
 	for ( T& item : vec ) is >> item;
 	return is;
 }
+
+typedef vector<int> VI;
+typedef vector<VI> VVI;
+typedef vector<string> VS;
+typedef pair<int, int> PII;
+typedef set<int> SI;
+typedef long long LL;
 
 // --------------------ここから--------------------
 
