@@ -99,6 +99,11 @@ typedef pair<int, int> PII;
 typedef set<int> SI;
 typedef long long LL;
 
+istringstream debug_iss(R"(
+デバッグ時はここに入力を貼り付けて下記マクロのコメントアウトを外す
+)");
+// #define cin debug_iss
+
 // int -> str: to_string(i)
 // str -> int: stoi(s)
 // vec -> set: set<int> s(ALL(v));

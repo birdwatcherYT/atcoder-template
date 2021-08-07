@@ -73,6 +73,14 @@ REP(i, 3)
 ```
 使えないコンパイラでは無視される
 
+## デバッグ用に標準入力を簡単に文字列ストリームに切り替えれるコードを用意
+```c++
+istringstream debug_iss(R"(
+デバッグ時はここに入力を貼り付けて下記マクロのコメントアウトを外す
+)");
+// #define cin debug_iss
+```
+
 ## [ac-library](https://atcoder.github.io/ac-library/document_ja/index.html)を使う場合
 1. [ac-library](https://github.com/atcoder/ac-library/releases)をダウンロードしてくる
 2. zipを展開して`ac-library`をcppと同じ階層に置く
