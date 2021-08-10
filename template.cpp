@@ -37,6 +37,7 @@
 #define CTOI(c) (c - '0')
 #define HEADSTR(str, n) str.substr(0, (n))
 #define TAILSTR(str, n) str.substr((str).length() - (n))
+#define CONTAINS(str, c) ((str).find(c) != string::npos)
 #define INSPOS(v, a) (lower_bound((v).begin(), (v).end(), a) - (v).begin())
 // io系
 #define OUT(x) cout << (x) << endl;
