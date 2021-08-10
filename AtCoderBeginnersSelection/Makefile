@@ -1,21 +1,27 @@
 SOURCES = $(wildcard *.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJDIR   = ./obj
+OBJECTS  = $(addprefix $(OBJDIR)/, $(SOURCES:.cpp=.o))
 TARGETS = $(SOURCES:.cpp=.exe)
-DEPENDS = $(SOURCES:.cpp=.d)
+DEPENDS = $(OBJECTS:.o=.d)
 
 CXX      = g++
 CXXFLAGS = -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -std=c++17
 RM       = rm -f
 LDFLAGS  =
 INCLUDE  = 
+# INCLUDE  = -I ac-library
 
 .PHONY:run
 run:$(TARGETS) $(OBJECTS)
 
-%.exe: %.o
+%.exe: $(OBJDIR)/%.o
 	$(CXX) -o $@ $< $(LDFLAGS)
+	# ./$@
 
-%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp
+	@if [ ! -d $(OBJDIR) ];\
+	then echo "mkdir -p $(OBJDIR)";mkdir -p $(OBJDIR);\
+	fi
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ -c $<
 
 #クリーンして実行
