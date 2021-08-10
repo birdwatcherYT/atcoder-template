@@ -226,9 +226,9 @@ private:
 public:
 	UnionFind(int n) : n(n), parent(n, -1){} // -1で初期化
 	// データxが属する木の根
-	int root(int x) const{
+	int root(int x) {
 		if (parent[x] < 0) return x;
-		return root(parent[x]);
+		return parent[x]=root(parent[x]);
 	}
 	// xとyの木を併合
 	void merge(int x, int y) {
@@ -239,15 +239,15 @@ public:
 		parent[y] = x; // 根の付け変え
 	}
 	// 同じ木に属するかどうか
-	bool same(int x, int y) const{
+	bool same(int x, int y) {
 		return root(x) == root(y);
 	}
 	// xの集合のサイズ
-	int size(int x) const{
+	int size(int x) {
 		return -parent[root(x)];
 	}
 	// xの属するメンバー
-	VI members(int x) const{
+	VI members(int x) {
 		int r = root(x);
 		VI mem;
 		REP(i, n)
@@ -256,7 +256,7 @@ public:
 		return mem;
 	}
 	// 根たち
-	VI root_members() const{
+	VI root_members() {
 		VI mem;
 		REP(i, n)
 			if (parent[i] < 0)
@@ -264,18 +264,18 @@ public:
 		return mem;
 	}
 	// 木の数
-	int group_count() const{
+	int group_count() {
 		return SZ(root_members());
 	}
 	// 根に対するすべてのメンバー
-	map<int, VI> all_group_members() const{
+	map<int, VI> all_group_members() {
 		map<int, VI> group_members;
 		REP(member, n)
 			group_members[root(member)].push_back(member);
 		return group_members;
 	}
 	// 表示用
-	friend ostream& operator<<(ostream& os, const UnionFind& uf){
+	friend ostream& operator<<(ostream& os, UnionFind& uf){
 		EACH(p, uf.all_group_members())
 			os << p.first << ": " << p.second << endl;
 		return os;
