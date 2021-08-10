@@ -232,7 +232,9 @@ public:
 	}
 	// xとyの木を併合
 	void merge(int x, int y) {
-		if (same(x,y)) return;
+        x = root(x);
+        y = root(y);
+        if (x == y) return;
 		if (parent[x] > parent[y])
 			swap(x, y);
 		parent[x] += parent[y]; // 個数更新
