@@ -13,8 +13,15 @@
 #include <queue>
 #include <stack>
 #include <numeric>
-#include <cassert>
+#include <cassert> // assert();
+#include <iomanip> // cout << setprecision(15);
 // #include <bits/stdc++.h>
+#ifndef M_PI
+	#define M_PI		3.14159265358979323846
+#endif
+#ifndef M_E
+	#define M_E		2.7182818284590452354
+#endif
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
