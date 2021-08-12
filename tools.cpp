@@ -26,6 +26,8 @@
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
 #define EACH(e, v) for(auto &e : v)
+#define ITR(it, v) for(auto it = (v).begin(); it != (v).end(); ++it)
+#define RITR(it, v) for(auto it = (v).rbegin(); it != (v).rend(); ++it)
 #define CASE(x) break; case x:
 #define ALL(v)  (v).begin(), (v).end()
 #define RALL(v) (v).rbegin(), (v).rend()
@@ -225,6 +227,39 @@ VI dfs_recursive(const vector< vector<PII> > &adj, int n, int s){
 	return visit;
 }
 
+// 深さ優先で抜けるときにpushする
+void _sccd(const VVI &adj, int s, vector<bool> &seen, VI &visit){
+	seen[s] = true;
+	EACH(to, adj[s])
+		if (!seen[to])
+			_sccd(adj, to, seen, visit);
+	visit.push_back(s);
+}
+// Strongly Connected Component Decomposition (強連結成分分解)
+VVI sccd(const VVI &adj, int n){
+	// 1. DFSで順序付け
+	vector<bool> seen(n, false);
+	VI visit;
+	REP(s, n){
+		if (!seen[s])
+			_sccd(adj, s, seen, visit);
+	}
+	// 2. DFSの順番に反転させたグラフをたどる
+	VVI adj_rev(n);
+	REP(i, n)EACH(j, adj[i])
+		adj_rev[j].push_back(i);
+	seen = vector<bool>(n, false);
+	VVI connected;
+	RITR(it, visit){
+		if (seen[*it])
+			continue;
+		VI component;
+		_sccd(adj_rev, *it, seen, component);
+		connected.push_back(component);
+	}
+	return connected;
+}
+
 class UnionFind {
 private:
 	int n;
@@ -297,7 +332,7 @@ int main() {
 	dump(combi_mod(4, 2, 5))
 	dump(pow_mod(5, 5, 100))
 	// グラフ
-	istringstream iss(
+	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
 		"0 1 1\n" // s t c
 		"0 2 4\n"
@@ -305,19 +340,43 @@ int main() {
 		"2 3 1\n"
 		"1 3 5\n"
 	);
-	int n, edges, start;
-	iss >> n >> edges >> start;
-	vector< vector<PII> > adj(n);
-	REP(_, edges){
+	int n1, m1, start;
+	iss1 >> n1 >> m1 >> start;
+	vector< vector<PII> > adj1(n1);
+	REP(_, m1){
 		int s, t, cost;
-		iss >> s >> t >> cost;
-		adj[s].push_back({t, cost});
+		iss1 >> s >> t >> cost;
+		adj1[s].push_back({t, cost});
 	}
-	dump(adj)
-	dump(dijkstra(adj, n, start))
-	dump(bfs(adj, n, start))
-	dump(dfs(adj, n, start))
-	dump(dfs_recursive(adj, n, start))
+	dump(adj1)
+	dump(dijkstra(adj1, n1, start))
+	dump(bfs(adj1, n1, start))
+	dump(dfs(adj1, n1, start))
+	dump(dfs_recursive(adj1, n1, start))
+	istringstream iss2(
+		"9 11 \n" // 頂点数 辺の数
+		"0 1 \n" // s t
+		"1 6 \n"
+		"6 0 \n"
+		"3 1 \n"
+		"3 5 \n"
+		"5 8 \n"
+		"8 4 \n"
+		"4 3 \n"
+		"5 7 \n"
+		"7 2 \n"
+		"2 7 \n"
+	);
+	int n2, m2;
+	iss2 >> n2 >> m2;
+	VVI adj2(n2);
+	REP(_, m2){
+		int s, t;
+		iss2 >> s >> t;
+		adj2[s].push_back(t);
+	}
+	dump(adj2)
+	dump(sccd(adj2, n2));
 	// UnionFind
 	UnionFind uf(5);
 	uf.merge(1,2);

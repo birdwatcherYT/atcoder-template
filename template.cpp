@@ -26,6 +26,8 @@
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
 #define EACH(e, v) for(auto &e : v)
+#define ITR(it, v) for(auto it = (v).begin(); it != (v).end(); ++it)
+#define RITR(it, v) for(auto it = (v).rbegin(); it != (v).rend(); ++it)
 #define CASE(x) break; case x:
 #define ALL(v)  (v).begin(), (v).end()
 #define RALL(v) (v).rbegin(), (v).rend()
