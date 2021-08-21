@@ -146,6 +146,20 @@ int combi_mod(int n, int r, int mod){
 	return (ans * inv_div) % mod;
 }
 
+// 素因数分解
+VI pfact(int x){
+	VI ans;
+	for (int i=2; i*i<=x; ++i){
+		while(x%i==0){
+			x/=i;
+			ans.push_back(i);
+		}
+	}
+	if (x!=1)
+		ans.push_back(x);
+	return ans;
+}
+
 // ダイクストラ：始点sからその他頂点への最短距離を返す
 VI dijkstra(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数, 始点)
 	VI dist(n, INT_MAX);
@@ -331,6 +345,7 @@ int main() {
 	dump(combi(4, 2))
 	dump(combi_mod(4, 2, 5))
 	dump(pow_mod(5, 5, 100))
+	dump(pfact(100))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
