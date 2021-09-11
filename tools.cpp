@@ -356,6 +356,23 @@ public:
 	}
 };
 
+// 最小全域木
+// edges: {cost, v1, v2}
+int kruskal(vector< tuple<int,int,int> > edges, int n) {
+	// コストが小さい順にソート
+	sort(edges.begin(), edges.end());
+	UnionFind uf(n);
+	int min_cost = 0;
+	for(auto [cost, v1, v2] : edges) {
+		if (!uf.same(v1, v2)) {
+			// 辺を追加しても閉路ができないなら、その辺を採用する
+			min_cost += cost;
+			uf.merge(v1, v2);
+		}
+	}
+	return min_cost;
+}
+
 int main() {
 	// 数学
 	dump(combi(4, 2))
