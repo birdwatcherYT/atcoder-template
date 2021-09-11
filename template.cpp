@@ -101,6 +101,22 @@ template<class T> istream& operator>>(istream& is, vector<T>& vec) {
 	for ( T& item : vec ) is >> item;
 	return is;
 }
+// 集合演算
+template<class T> set<T> operator&(const set<T>& a, const set<T>& b) {// 共通集合
+	set<T> ans;
+	set_intersection(a.begin(), a.end(), b.begin(), b.end(), std::inserter(ans, ans.end()));
+	return ans;
+}
+template<class T> set<T> operator|(const set<T>& a, const set<T>& b) {// 和集合
+	set<T> ans;
+	std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::inserter(ans, ans.end()));
+	return ans;
+}
+template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集合
+	set<T> ans;
+	std::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::inserter(ans, ans.end()));
+	return ans;
+}
 
 typedef vector<int> VI;
 typedef vector<VI> VVI;
@@ -129,5 +145,6 @@ int main() {
 	OUT(nums)
 
 	print(1,2,3,4,5);
+
 	return 0;
 }
