@@ -374,35 +374,41 @@ int kruskal(vector< tuple<int,int,int> > edges, int n) {
 }
 
 // 最大値に関するセグメント木
-class SegmentTree{
+template <class T>
+class SegmentTree {
 private:
-	int init_val; // 初期値
+	T init_val; // 初期値
 	int num_leaves; // 2のべき
-	VI data, lazy;
+	vector<T> data, lazy;
+	vector<bool> upd;
 
-    void __update(int a, int b, int val, int i, int l, int r) {
-        eval(i);
-        if (a <= l && r <= b) { // 範囲内のとき
-            lazy[i] = val;
-            eval(i);
-        } else if (a < r && l < b) {
-            __update(a, b, val, i * 2 + 1, l, (l + r) / 2);
-            __update(a, b, val, i * 2 + 2, (l + r) / 2, r);
-            data[i] = max(data[i * 2 + 1], data[i * 2 + 2]);
-        }
-    }
-	int __query(int a, int b, int i, int l, int r) {
+	T op(T a, T b){
+		return max(a, b); // ここを書き換えれば最小値, 合計値に対する木も作れる
+	}
+	void __update(int a, int b, T val, int i, int l, int r) {
+		eval(i);
+		if (a <= l && r <= b) { // 範囲内のとき
+			lazy[i] = val;
+			upd[i] = true;
+			eval(i);
+		} else if (a < r && l < b) {
+			__update(a, b, val, i * 2 + 1, l, (l + r) / 2);
+			__update(a, b, val, i * 2 + 2, (l + r) / 2, r);
+			data[i] = op(data[i * 2 + 1], data[i * 2 + 2]);
+		}
+	}
+	T __query(int a, int b, int i, int l, int r) {
 		eval(i);
 		if (r <= a || b <= l) // 範囲外のとき
 			return init_val;
 		if (a <= l && r <= b)// 範囲内のとき
 			return data[i];
-		int vl = __query(a, b, i * 2 + 1, l, (l + r) / 2);
-		int vr = __query(a, b, i * 2 + 2, (l + r) / 2, r);
-		return max(vl, vr);
+		T vl = __query(a, b, i * 2 + 1, l, (l + r) / 2);
+		T vr = __query(a, b, i * 2 + 2, (l + r) / 2, r);
+		return op(vl, vr);
 	}
 	void eval(int i) {
-		if (lazy[i] == init_val) return; // 更新が無ければスルー
+		if (!upd[i]) return; // 更新が無ければスルー
 		if (i < num_leaves - 1) { // 葉でなければ子に伝搬
 			lazy[i * 2 + 1] = lazy[i];
 			lazy[i * 2 + 2] = lazy[i];
@@ -410,9 +416,10 @@ private:
 		// 自身を更新
 		data[i] = lazy[i];
 		lazy[i] = init_val;
+		upd[i] = false;
 	}
 public:
-	SegmentTree(int n, int init=INT_MIN) {// [0,n)の範囲を持つセグメント木
+	SegmentTree(int n, T init) {// [0,n)の範囲を持つセグメント木
 		int x = 1;
 		while(n > x)
 			x *= 2;
@@ -420,17 +427,18 @@ public:
 		init_val = init;
 		data.resize(num_leaves*2-1, init_val);
 		lazy.resize(num_leaves*2-1, init_val);
+		upd.resize(num_leaves*2-1, false);
 	}
-	void update(int a, int b, int val) {// [a,b)区間の値をvalに更新
+	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新
 		__update(a, b, val, 0, 0, num_leaves);
 	}
-	void update(int i, int val) {// 値を更新
+	void update(int i, T val) {// 値を更新
 		__update(i, i+1, val, 0, 0, num_leaves);
 	}
-	int query(int a, int b) {// [a,b)の最大値を取得
+	T query(int a, int b) {// [a,b)の最大値を取得
 		return __query(a, b, 0, 0, num_leaves);
 	}
-	int query(int i) {// iの最大値を取得
+	T query(int i) {// iの最大値を取得
 		return __query(i, i+1, 0, 0, num_leaves);
 	}
 	// 表示用
@@ -439,14 +447,44 @@ public:
 		for (int i = 0; i < 2*st.num_leaves-1; ++i) {
 			os << st.query(i) << ", ";
 			if (br==i+1){
-				os<<endl;
-				br=2*br+1;
+				os << endl;
+				br = 2*br+1;
 			}
 		}
 		return os;
 	}
 };
 
+// Binary Indexed Tree
+template <class T>
+class BIT {
+	int n;
+	vector<T> bit;
+public:
+	BIT(int _n) : n(_n + 1), bit(n, 0) {}
+	// a[i] += val ただし i in [0, n)
+	void add(int i, T val) {
+		for (int idx = i+1; idx <= n; idx += (idx & -idx))
+			bit[idx] += val;
+	}
+	// a[0] + ... + a[i] ただし i in [0, n)
+	T sum(int i) {
+		T s(0);
+		for (int idx = i+1; idx > 0; idx -= (idx & -idx)) 
+			s += bit[idx];
+		return s;
+	}
+};
+
+// 座標圧縮
+int compress(VI &vec){
+	map<int, int> mem;
+	for(auto v: vec) mem[v] = 0;
+	int sz = 0;
+	for(auto &p: mem) p.second = sz++;
+	for(auto &p: vec) p = mem[p];
+	return sz;
+}
 
 int main() {
 	// 数学
