@@ -412,6 +412,8 @@ private:
 		if (i < num_leaves - 1) { // 葉でなければ子に伝搬
 			lazy[i * 2 + 1] = lazy[i];
 			lazy[i * 2 + 2] = lazy[i];
+			upd[i * 2 + 1] = true;
+			upd[i * 2 + 2] = true;
 		}
 		// 自身を更新
 		data[i] = lazy[i];
