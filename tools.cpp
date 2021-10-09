@@ -443,9 +443,10 @@ public:
 	}
 	// 表示用
 	friend ostream& operator<<(ostream& os, SegmentTree& st){
+		st.query(0, st.num_leaves);
 		int br=1;
 		for (int i = 0; i < 2*st.num_leaves-1; ++i) {
-			os << st.query(i) << ", ";
+			os << st.data[i] << ", ";
 			if (br==i+1){
 				os << endl;
 				br = 2*br+1;
