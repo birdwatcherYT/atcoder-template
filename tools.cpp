@@ -290,6 +290,34 @@ VVI sccd(const VVI &adj, int n){
 	return connected;
 }
 
+// 有向グラフの順序で見て, 頂点に順序をつける
+VI topological_sort(const VVI &adj, int n){
+	// 入次数
+	VI indeg(n, 0);
+	REP(i, n)EACH(j, adj[i])
+		indeg[j]++;
+	
+	priority_queue< int, VI, greater<int> > heap;
+	REP(i, n){
+		if (indeg[i] == 0) 
+			heap.push(i);
+	}
+	VI ans;
+	while (!heap.empty()) {
+		// 入次数がゼロで番号が若い順に訪問する
+		int i = heap.top();
+		heap.pop();
+		ans.push_back(i);
+		// iをグラフから削除
+		EACH(j, adj[i]) {
+			indeg[j]--;
+			if (indeg[j] == 0)
+				heap.push(j);
+		}
+	}
+	return ans;
+}
+
 class UnionFind {
 private:
 	int n;
