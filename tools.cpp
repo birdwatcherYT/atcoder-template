@@ -232,7 +232,6 @@ VI dfs(const vector< vector<PII> > &adj, int n, int s){  // (隣接, ノード�
 				st.push(to);
 		}
 	}
-
 	return visit;
 }
 
@@ -374,8 +373,7 @@ public:
 	}
 	// 表示用
 	friend ostream& operator<<(ostream& os, UnionFind& uf){
-		EACH(p, uf.all_group_members())
-			os << p.first << ": " << p.second << endl;
+		os << uf.all_group_members();
 		return os;
 	}
 };
