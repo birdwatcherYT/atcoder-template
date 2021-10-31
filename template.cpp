@@ -85,6 +85,12 @@ template<class T1, class T2> ostream& operator<<(ostream& os, const map<T1, T2>&
 	os << "}";
 	return os;
 }
+template<class... T> ostream& operator<<(ostream& os, const tuple<T...>& t) {
+	os<<"(";
+	apply([&os](auto&&... args) {((os<< args << ", "), ...);}, t);
+	os<<")";
+	return os;
+}
 // 入力系
 template<class T1, class T2> istream& operator>>(istream& is, pair<T1, T2>& p) {
 	is >> p.first >> p.second;
@@ -92,6 +98,10 @@ template<class T1, class T2> istream& operator>>(istream& is, pair<T1, T2>& p) {
 }
 template<class T> istream& operator>>(istream& is, vector<T>& vec) {
 	for ( T& item : vec ) is >> item;
+	return is;
+}
+template<class... T> istream& operator>>(istream& is, tuple<T...>& t) {
+	apply([&is](auto&&... args) {((is >> args), ...);}, t);
 	return is;
 }
 // 集合演算
