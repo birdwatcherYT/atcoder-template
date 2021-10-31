@@ -517,6 +517,20 @@ int compress(VI &vec){
 	return sz;
 }
 
+// 最長増加部分列の長さ
+size_t LIS(const VI &ary){
+	VI dp;// 長さkである増加部分列のうち, 最後の要素の最小値
+	dp.reserve(ary.size());
+	for(int a : ary){
+		size_t i=INSPOS(dp, a);
+		if (i<dp.size())
+			dp[i]=a;
+		else
+			dp.push_back(a);
+	}
+	return dp.size();
+}
+
 int main() {
 	// 数学
 	dump(combi(4, 2))
@@ -575,5 +589,7 @@ int main() {
 	uf.merge(0,4);
 	OUT("UnionFind")
 	OUT(uf)
+	//
+	dump(LIS(VI{3, 1, 4, 1, 5, 9, 2, 6}))
 	return 0;
 }
