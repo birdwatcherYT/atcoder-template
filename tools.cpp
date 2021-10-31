@@ -48,9 +48,7 @@
 #define TAILSTR(str, n) str.substr((str).length() - (n))
 #define CONTAINS(str, c) ((str).find(c) != string::npos)
 #define INSPOS(v, a) (lower_bound((v).begin(), (v).end(), a) - (v).begin())
-// io系
-#define OUT(x) cout << (x) << endl;
-#define IN(x) cin >> x;
+// デバッグ用
 #define dump(x)  cerr << #x << " = " << (x) << endl;
 #define debug(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << " " << __FILE__ << endl;
 
@@ -63,13 +61,8 @@ template<class T> vector<size_t> argsort(const vector<T> &vec, bool asc=true){
 	return index;
 }
 // 表示系
-template <class Head> void print(Head&& head) {
-	cout << head << endl;
-}
-template <class Head, class... Tail> void print(Head&& head, Tail&&... tail) {
-	cout << head << " ";
-	print(forward<Tail>(tail)...);
-}
+template <class Head> void OUT(Head&& head) {cout << head << endl;}
+template <class Head, class... Tail> void OUT(Head&& head, Tail&&... tail) {cout << head << " ";OUT(forward<Tail>(tail)...);}
 template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
 	os << "(" << p.first << ", " << p.second << ")";
 	return os;
@@ -124,6 +117,9 @@ typedef vector<string> VS;
 typedef pair<int, int> PII;
 typedef set<int> SI;
 typedef long long LL;
+
+template <class Head> void IN(Head&& head) {cin >> head;}
+template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
 
 // --------------------ここから--------------------
 
@@ -559,6 +555,7 @@ int main() {
 	dump(bfs(adj1, n1, start))
 	dump(dfs(adj1, n1, start))
 	dump(dfs_recursive(adj1, n1, start))
+	//
 	istringstream iss2(
 		"9 11 \n" // 頂点数 辺の数
 		"0 1 \n" // s t
@@ -587,8 +584,7 @@ int main() {
 	UnionFind uf(5);
 	uf.merge(1,2);
 	uf.merge(0,4);
-	OUT("UnionFind")
-	OUT(uf)
+	dump(uf);
 	//
 	dump(LIS(VI{3, 1, 4, 1, 5, 9, 2, 6}))
 	return 0;

@@ -48,9 +48,7 @@
 #define TAILSTR(str, n) str.substr((str).length() - (n))
 #define CONTAINS(str, c) ((str).find(c) != string::npos)
 #define INSPOS(v, a) (lower_bound((v).begin(), (v).end(), a) - (v).begin())
-// io系
-#define OUT(x) cout << (x) << endl;
-#define IN(x) cin >> x;
+// デバッグ用
 #define dump(x)  cerr << #x << " = " << (x) << endl;
 #define debug(x) cerr << #x << " = " << (x) << " (L" << __LINE__ << ")" << " " << __FILE__ << endl;
 
@@ -63,13 +61,8 @@ template<class T> vector<size_t> argsort(const vector<T> &vec, bool asc=true){
 	return index;
 }
 // 表示系
-template <class Head> void print(Head&& head) {
-	cout << head << endl;
-}
-template <class Head, class... Tail> void print(Head&& head, Tail&&... tail) {
-	cout << head << " ";
-	print(forward<Tail>(tail)...);
-}
+template <class Head> void OUT(Head&& head) {cout << head << endl;}
+template <class Head, class... Tail> void OUT(Head&& head, Tail&&... tail) {cout << head << " ";OUT(forward<Tail>(tail)...);}
 template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
 	os << "(" << p.first << ", " << p.second << ")";
 	return os;
@@ -130,21 +123,19 @@ istringstream debug_iss(R"(
 )");
 // #define cin debug_iss
 
+template <class Head> void IN(Head&& head) {cin >> head;}
+template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
+
 // int -> str: to_string(i)
 // str -> int: stoi(s)
 // vec -> set: set<int> s(ALL(v));
 int main() {
 	// in
 	int n;
-	IN(n)
+	IN(n);
 	VI nums(n);
-	IN(nums)
-
+	IN(nums);
 	// out
-	OUT(n)
-	OUT(nums)
-
-	print(1,2,3,4,5);
-
+	OUT(n, nums);
 	return 0;
 }
