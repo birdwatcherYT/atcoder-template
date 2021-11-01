@@ -122,8 +122,9 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 // --------------------ここから--------------------
 
 // a^n % mod
-int pow_mod(int a, int n, int mod){
-	int ans = 1;
+template<class T>
+T pow_mod(T a, T n, T mod){
+	T ans = 1;
 	while (n > 0) {
 		if ((n & 1))
 			ans = (ans * a) % mod;
@@ -134,10 +135,10 @@ int pow_mod(int a, int n, int mod){
 }
 
 // nCr
-int combi(int n, int r){
+template<class T>
+T combi(T n, T r){
 	r = (r > n / 2) ? n - r : r;
-
-	int ans = 1;
+	T ans = 1;
 	for (int i = 1; i <= r; i++, n--) {
 		ans *= n;
 		ans /= i;
@@ -146,13 +147,14 @@ int combi(int n, int r){
 }
 
 // nCr % mod ただし modは素数
-int combi_mod(int n, int r, int mod){
-	int ans=1, div=1;
-	for (int i = n; i > n-r; --i)
+template<class T>
+T combi_mod(T n, T r, T mod){
+	T ans=1, div=1;
+	for (T i = n; i > n-r; --i)
 		ans = (ans*(i%mod))%mod;
-	for (int i = 1; i < r+1; ++i)
+	for (T i = 1; i < r+1; ++i)
 		div = (div*(i%mod))%mod;
-	int inv_div = pow_mod(div, mod-2, mod); // 整数の逆元
+	T inv_div = pow_mod(div, mod-2, mod); // 整数の逆元
 	return (ans * inv_div) % mod;
 }
 
