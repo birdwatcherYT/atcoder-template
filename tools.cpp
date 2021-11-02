@@ -109,12 +109,14 @@ template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集�
 	return ans;
 }
 
-typedef vector<int> VI;
-typedef vector<VI> VVI;
-typedef vector<string> VS;
-typedef pair<int, int> PII;
-typedef set<int> SI;
 typedef long long LL;
+typedef vector<int> VI; typedef vector<VI> VVI;
+typedef vector<LL> VL; typedef vector<VL> VVL;
+typedef vector<bool> VB; typedef vector<VB> VVB;
+typedef vector<char> VC; typedef vector<string> VS;
+typedef pair<int, int> PII; typedef pair<LL, LL> PLL;
+typedef map<int, int> MII; typedef map<LL, LL> MLL;
+typedef set<int> SI; typedef set<LL> SL;
 
 template <class Head> void IN(Head&& head) {cin >> head;}
 template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
@@ -180,7 +182,7 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 	priority_queue< pair<T, int>, vector< pair<T, int> >, greater< pair<T, int> > > pq;
 	pq.push({0, s}); // (コスト, ノード)
 	dist[s] = 0;
-	vector<bool> seen(n, false);
+	VB seen(n, false);
 	while (!pq.empty()){
 		int v = pq.top().second;
 		pq.pop();
@@ -199,7 +201,7 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 VI bfs(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数, 始点)
 	queue<int> que;
 	que.push(s);
-	vector<bool> seen(n, false);
+	VB seen(n, false);
 
 	VI visit;
 	while (!que.empty()){
@@ -220,7 +222,7 @@ VI bfs(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数
 VI dfs(const vector< vector<PII> > &adj, int n, int s){  // (隣接, ノード数, 始点)
 	stack<int> st;
 	st.push(s);
-	vector<bool> seen(n, false);
+	VB seen(n, false);
 
 	VI visit;
 	while (!st.empty()) {
@@ -238,7 +240,7 @@ VI dfs(const vector< vector<PII> > &adj, int n, int s){  // (隣接, ノード�
 }
 
 // 深さ優先（再帰）で訪問したノードの順番を返す
-void _dfs_recursive(const vector< vector<PII> > &adj, int n, int s, vector<bool> &seen, VI &visit){
+void _dfs_recursive(const vector< vector<PII> > &adj, int n, int s, VB &seen, VI &visit){
 	if (!seen[s])
 		visit.push_back(s);
 	seen[s] = true;
@@ -248,14 +250,14 @@ void _dfs_recursive(const vector< vector<PII> > &adj, int n, int s, vector<bool>
 	}
 }
 VI dfs_recursive(const vector< vector<PII> > &adj, int n, int s){
-	vector<bool> seen(n, false);
+	VB seen(n, false);
 	VI visit;
 	_dfs_recursive(adj, n, s, seen, visit);
 	return visit;
 }
 
 // 深さ優先で抜けるときにpushする
-void _sccd(const VVI &adj, int s, vector<bool> &seen, VI &visit){
+void _sccd(const VVI &adj, int s, VB &seen, VI &visit){
 	seen[s] = true;
 	EACH(to, adj[s])
 		if (!seen[to])
@@ -265,7 +267,7 @@ void _sccd(const VVI &adj, int s, vector<bool> &seen, VI &visit){
 // Strongly Connected Component Decomposition (強連結成分分解)
 VVI sccd(const VVI &adj, int n){
 	// 1. DFSで順序付け
-	vector<bool> seen(n, false);
+	VB seen(n, false);
 	VI visit;
 	REP(s, n){
 		if (!seen[s])
@@ -275,7 +277,7 @@ VVI sccd(const VVI &adj, int n){
 	VVI adj_rev(n);
 	REP(i, n)EACH(j, adj[i])
 		adj_rev[j].push_back(i);
-	seen = vector<bool>(n, false);
+	seen = VB(n, false);
 	VVI connected;
 	RITR(it, visit){
 		if (seen[*it])
@@ -405,7 +407,7 @@ private:
 	T init_val; // 初期値
 	int num_leaves; // 2のべき
 	vector<T> data, lazy;
-	vector<bool> upd;
+	VB upd;
 
 	T op(T a, T b){
 		return max(a, b); // ここを書き換えれば最小値, 合計値に対する木も作れる

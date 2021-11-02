@@ -109,12 +109,14 @@ template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集�
 	return ans;
 }
 
-typedef vector<int> VI;
-typedef vector<VI> VVI;
-typedef vector<string> VS;
-typedef pair<int, int> PII;
-typedef set<int> SI;
 typedef long long LL;
+typedef vector<int> VI; typedef vector<VI> VVI;
+typedef vector<LL> VL; typedef vector<VL> VVL;
+typedef vector<bool> VB; typedef vector<VB> VVB;
+typedef vector<char> VC; typedef vector<string> VS;
+typedef pair<int, int> PII; typedef pair<LL, LL> PLL;
+typedef map<int, int> MII; typedef map<LL, LL> MLL;
+typedef set<int> SI; typedef set<LL> SL;
 
 istringstream debug_iss(R"(
 デバッグ時はここに入力を貼り付けて下記マクロのコメントアウトを外す
