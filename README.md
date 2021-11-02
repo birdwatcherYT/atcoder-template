@@ -14,6 +14,7 @@ atcoderのABC用C++テンプレ
     - 深さ優先（by スタック）
     - 深さ優先（by 再帰）
     - UnionFind
+    など
 - コンパイル後に自動的に実行するようにするにはMakefileの`# ./$@`のコメントアウトを外す
 
 `./AtCoderBeginnersSelection/`に[AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例を掲載
@@ -29,7 +30,7 @@ cout << vec;
 >10 20 30 (入力)<br>
 >[ 10, 20, 30, ]
 
-### `pair<T1, T2>`の`ostream`/`istream`に対して演算子`<<`/`>>`を定義
+### `pair<T1, T2>`, `tuple`の`ostream`/`istream`に対して演算子`<<`/`>>`を定義
 ```c++
 pair<int, int> p;
 cin >> p;
@@ -50,28 +51,36 @@ cout << m;
 ```
 >{ 1:2, 3:4, }
 
-### スペースで区切って与えられた引数を表示する関数を定義
+### スペースで区切って与えられた引数を入力/出力する関数を定義
 ```c++
-print(1,2,3,4,5);
+int a,b,c;
+IN(a,b,c);
+OUT(a,b,c);
 ```
->1 2 3 4 5
+>1 2 3 (入力)<br>
+>1 2 3
 
-### その他表記が簡単になるマクロを定義
+### その他表記が簡単になるマクロやtypedefを定義
 ```c++
 REP(i, 3)
-    OUT(i)
+    OUT(i);
 ```
 >0<br>
 >1<br>
 >2<br>
 
+```c++
+LL a = 1LL; // long long
+VI vec; // vector<int>
+```
+
 詳しくは[template.cpp](./template.cpp)を参照。
 
-### 最適化オプションで`-O3`に相当するものを使用
+### 最適化オプションで`-O3`に相当するものを準備
 ```c++
-#pragma GCC optimize("O3")
+// #pragma GCC optimize("O3")
 ```
-使えないコンパイラでは無視される
+使えないコンパイラでは無視される. 使用する場合はコメントアウトを外す. 
 
 ## デバッグ用に標準入力を簡単に文字列ストリームに切り替えれるコードを用意
 ```c++

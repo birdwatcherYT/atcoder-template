@@ -1,4 +1,4 @@
-#pragma GCC optimize("O3")
+// #pragma GCC optimize("O3")
 // #include <atcoder/all>
 #include <iostream>
 #include <sstream>
