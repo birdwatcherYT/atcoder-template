@@ -159,9 +159,10 @@ T combi_mod(T n, T r, T mod){
 }
 
 // 素因数分解
-VI pfact(int x){
-	VI ans;
-	for (int i=2; i*i<=x; ++i){
+template<class T>
+vector<T> pfact(T x){
+	vector<T> ans;
+	for (T i=2; i*i<=x; ++i){
 		while(x%i==0){
 			x/=i;
 			ans.push_back(i);
@@ -173,9 +174,10 @@ VI pfact(int x){
 }
 
 // ダイクストラ：始点sからその他頂点への最短距離を返す
-VI dijkstra(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数, 始点)
-	VI dist(n, INT_MAX);
-	priority_queue< PII, vector<PII>, greater<PII> > pq;
+template<class T>
+vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
+	vector<T> dist(n, numeric_limits<T>::max());
+	priority_queue< pair<T, int>, vector< pair<T, int> >, greater< pair<T, int> > > pq;
 	pq.push({0, s}); // (コスト, ノード)
 	dist[s] = 0;
 	vector<bool> seen(n, false);
@@ -380,11 +382,12 @@ public:
 
 // 最小全域木
 // edges: {cost, v1, v2}
-int kruskal(vector< tuple<int,int,int> > edges, int n) {
+template<class T>
+T kruskal(vector< tuple<T,int,int> > edges, int n) {
 	// コストが小さい順にソート
 	sort(edges.begin(), edges.end());
 	UnionFind uf(n);
-	int min_cost = 0;
+	T min_cost = 0;
 	for(auto [cost, v1, v2] : edges) {
 		if (!uf.same(v1, v2)) {
 			// 辺を追加しても閉路ができないなら、その辺を採用する
@@ -502,20 +505,22 @@ public:
 };
 
 // 座標圧縮
-int compress(VI &vec){
-	map<int, int> mem;
+template<class T>
+T compress(vector<T> &vec){
+	map<T, T> mem;
 	for(auto v: vec) mem[v] = 0;
-	int sz = 0;
+	T sz = 0;
 	for(auto &p: mem) p.second = sz++;
 	for(auto &p: vec) p = mem[p];
 	return sz;
 }
 
 // 最長増加部分列の長さ
-size_t LIS(const VI &ary){
-	VI dp;// 長さkである増加部分列のうち, 最後の要素の最小値
+template<class T>
+size_t LIS(const vector<T> &ary){
+	vector<T> dp;// 長さkである増加部分列のうち, 最後の要素の最小値
 	dp.reserve(ary.size());
-	for(int a : ary){
+	for(T a : ary){
 		size_t i=INSPOS(dp, a);
 		if (i<dp.size())
 			dp[i]=a;
@@ -577,12 +582,12 @@ int main() {
 		adj2[s].push_back(t);
 	}
 	dump(adj2)
-	dump(sccd(adj2, n2));
+	dump(sccd(adj2, n2))
 	// UnionFind
 	UnionFind uf(5);
 	uf.merge(1,2);
 	uf.merge(0,4);
-	dump(uf);
+	dump(uf)
 	//
 	dump(LIS(VI{3, 1, 4, 1, 5, 9, 2, 6}))
 	return 0;
