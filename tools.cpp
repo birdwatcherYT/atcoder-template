@@ -109,7 +109,7 @@ template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集�
 	return ans;
 }
 
-typedef long long LL;
+typedef long long LL; typedef unsigned long long ULL;
 typedef vector<int> VI; typedef vector<VI> VVI;
 typedef vector<LL> VL; typedef vector<VL> VVL;
 typedef vector<bool> VB; typedef vector<VB> VVB;
@@ -134,6 +134,12 @@ T pow_mod(T a, T n, T mod){
 		n >>= 1;
 	}
 	return ans;
+}
+
+// aのmod pにおける逆元
+template<class T>
+T inverse(T a, T prime_mod){
+	return pow_mod(a, prime_mod-2, prime_mod);
 }
 
 // nCr
@@ -537,6 +543,7 @@ int main() {
 	dump(combi(4, 2))
 	dump(combi_mod(4, 2, 5))
 	dump(pow_mod(5, 5, 100))
+	dump(inverse(2LL, 1000000007LL))
 	dump(pfact(100))
 	// グラフ
 	istringstream iss1(

@@ -109,7 +109,7 @@ template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集�
 	return ans;
 }
 
-typedef long long LL;
+typedef long long LL; typedef unsigned long long ULL;
 typedef vector<int> VI; typedef vector<VI> VVI;
 typedef vector<LL> VL; typedef vector<VL> VVL;
 typedef vector<bool> VB; typedef vector<VB> VVB;
