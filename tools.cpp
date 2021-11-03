@@ -1,5 +1,6 @@
 // #pragma GCC optimize("O3")
 // #include <atcoder/all>
+// #include <bits/stdc++.h>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -15,13 +16,10 @@
 #include <numeric>
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15);
-// #include <bits/stdc++.h>
-#ifndef M_PI
-	#define M_PI		3.14159265358979323846
-#endif
-#ifndef M_E
-	#define M_E		2.7182818284590452354
-#endif
+const double _PI = 3.14159265358979323846;
+const double _E = 2.7182818284590452354;
+const int INF = INT_MAX / 2;
+const long long LINF = LLONG_MAX / 2;
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
@@ -213,7 +211,7 @@ int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
 // ダイクストラ：始点sからその他頂点への最短距離を返す
 template<class T>
 vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
-	vector<T> dist(n, numeric_limits<T>::max());
+	vector<T> dist(n, numeric_limits<T>::max()/2);
 	priority_queue< pair<T, int>, vector< pair<T, int> >, greater< pair<T, int> > > pq;
 	pq.push({0, s}); // (コスト, ノード)
 	dist[s] = 0;
@@ -230,6 +228,17 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 		}
 	}
 	return dist;
+}
+
+// Floyd–Warshall: 全ペアの最短経路
+template<class T>
+vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (移動コスト行列, 頂点数)
+	vector< vector<T> > cost_min = cost;
+	REP(i, n)
+		cost_min[i][i]=0;
+	REP(k, n)REP(i, n)REP(j, n)
+		cost_min[i][j]=min(cost_min[i][j], cost_min[i][k]+cost_min[k][j]);
+	return cost_min;
 }
 
 // 幅優先で訪問したノードの順番を返す

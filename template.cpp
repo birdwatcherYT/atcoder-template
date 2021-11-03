@@ -1,5 +1,6 @@
 // #pragma GCC optimize("O3")
 // #include <atcoder/all>
+// #include <bits/stdc++.h>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -15,13 +16,10 @@
 #include <numeric>
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15);
-// #include <bits/stdc++.h>
-#ifndef M_PI
-	#define M_PI		3.14159265358979323846
-#endif
-#ifndef M_E
-	#define M_E		2.7182818284590452354
-#endif
+const double _PI = 3.14159265358979323846;
+const double _E = 2.7182818284590452354;
+const int INF = INT_MAX / 2;
+const long long LINF = LLONG_MAX / 2;
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
 #define REP(i, n)  FOR(i, 0, n)
 #define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
@@ -130,12 +128,10 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 // str -> int: stoi(s)
 // vec -> set: set<int> s(ALL(v));
 int main() {
-	// in
 	int n;
 	IN(n);
 	VI nums(n);
 	IN(nums);
-	// out
 	OUT(n, nums);
 	return 0;
 }
