@@ -194,6 +194,22 @@ vector<T> divisor(T x){
 	return ans;
 }
 
+// 2分探索
+template<class T>
+int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
+	int left=0, right=SZ(vec)-1;
+	while(left <= right){
+		LL mid = (left+right)/2;
+		T val = vec[mid]; // ここを任意の関数に書き換えてよく使う
+		if (val < key  // 降順の場合は不等号を逆にする
+			|| (!lower_bound && val == key))
+			left=mid+1;
+		else
+			right=mid-1;
+	}
+	return left;
+}
+
 // ダイクストラ：始点sからその他頂点への最短距離を返す
 template<class T>
 vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
@@ -613,5 +629,9 @@ int main() {
 	dump(uf)
 	//
 	dump(LIS(VI{3, 1, 4, 1, 5, 9, 2, 6}))
+	dump(bsearch(VI{1,1,2,2,2,4}, 2))
+	dump(bsearch(VI{1,1,2,2,2,4}, 2, false))
+	dump(bsearch(VI{1,1,2,2,2,4}, 8))
+	dump(bsearch(VI{1,1,2,2,2,4}, 8, false))
 	return 0;
 }
