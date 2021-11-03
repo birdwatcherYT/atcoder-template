@@ -181,6 +181,19 @@ vector<T> pfact(T x){
 	return ans;
 }
 
+// 約数列挙
+template<class T>
+vector<T> divisor(T x){
+	vector<T> ans;
+	for (T i=1; i*i<=x; ++i){
+		if(x%i!=0) continue;
+		ans.push_back(i);
+		if (i!=(x/i)) ans.push_back(x/i);
+	}
+	SORT(ans);
+	return ans;
+}
+
 // ダイクストラ：始点sからその他頂点への最短距離を返す
 template<class T>
 vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
@@ -545,6 +558,7 @@ int main() {
 	dump(pow_mod(5, 5, 100))
 	dump(inverse(2LL, 1000000007LL))
 	dump(pfact(100))
+	dump(divisor(100))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
