@@ -634,6 +634,18 @@ T compress(vector<T> &vec){
 	return sz;
 }
 
+// 配列を90度右回転させる
+template<class T>
+vector< vector<T> > rotate90(const vector< vector<T> >& mat){
+	int m=mat.size(),n=mat[0].size();
+	vector< vector<T> > ans(n, vector<T>(m));
+	REP(i, m)REP(j, n)
+		ans[j][i]=mat[m-1-i][j];
+	return ans;
+}
+
+
+
 // 最長増加部分列の長さ
 template<class T>
 size_t LIS(const vector<T> &ary){
@@ -715,6 +727,8 @@ int main() {
 	uf.merge(0,4);
 	dump(uf)
 	//
+	VVI mat={{1,2,3},{4,5,6}};
+	dump(rotate90(mat))
 	dump(LIS(VI{3, 1, 4, 1, 5, 9, 2, 6}))
 	dump(bsearch(VI{1,1,2,2,2,4}, 2))
 	dump(bsearch(VI{1,1,2,2,2,4}, 2, false))
