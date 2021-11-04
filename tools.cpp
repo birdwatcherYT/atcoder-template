@@ -139,10 +139,38 @@ T pow_mod(T a, T n, T mod){
 	return ans;
 }
 
-// aのmod pにおける逆元
+// 拡張ユークリッド互除法 ax + by = gcd(a,b) -> {x, y, gcd}
 template<class T>
-T inverse(T a, T prime_mod){
-	return pow_mod(a, prime_mod-2, prime_mod);
+tuple<T,T,T> extend_euclid(T a, T b) {
+	//STEP1
+	T x0 = 1, x1 = 0, x2, y0 = 0, y1 = 1, y2, r0 = a, r1 = b, r2, q2;
+	//STEP2
+	while (r1 != 0) {
+		//STEP2-1
+		q2 = r0 / r1;
+		r2 = r0 % r1;
+		//STEP2-2
+		x2 = x0 - q2 * x1;
+		y2 = y0 - q2 * y1;
+		//
+		x0 = x1;
+		x1 = x2;
+		y0 = y1;
+		y1 = y2;
+		r0 = r1;
+		r1 = r2;
+	}
+	return {x0, y0, r0};
+}
+
+// aのmod pにおける逆元 (aとpは互いに素)
+template<class T>
+T inverse(T a, T prime_mod, bool euclid=true){
+	if (!euclid) 
+		return pow_mod(a, prime_mod-2, prime_mod);
+	auto [x,y,g]=extend_euclid(a, prime_mod);
+	assert(g==1);
+	return ( (x<0) ? (x+prime_mod):x ) % prime_mod;
 }
 
 // nCr
@@ -196,6 +224,7 @@ vector<T> divisor(T x){
 	SORT(ans);
 	return ans;
 }
+
 
 // 2分探索
 template<class T>
@@ -586,7 +615,9 @@ int main() {
 	dump(combi(4, 2))
 	dump(combi_mod(4, 2, 5))
 	dump(pow_mod(5, 5, 100))
-	dump(inverse(2LL, 1000000007LL))
+	dump(inverse(2LL, 1000000007LL, true))
+	dump(inverse(2LL, 1000000007LL, false))
+	dump(extend_euclid(2LL, 1000000007LL))
 	dump(pfact(100))
 	dump(divisor(100))
 	// グラフ
