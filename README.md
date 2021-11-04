@@ -17,7 +17,7 @@ atcoderのABC用C++テンプレ
     など
 - コンパイル後に自動的に実行するようにするにはMakefileの`# ./$@`のコメントアウトを外す
 
-## 具体例
+## 使用例
 - [AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例
     - `./AtCoderBeginnersSelection/`
 - [競プロ典型90問](https://atcoder.jp/contests/typical90/tasks)を解く例
