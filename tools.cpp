@@ -240,6 +240,31 @@ vector<T> eratosthenes(T x){
 	return ans;
 }
 
+// 10進数からb進数に変換
+template<class T> 
+string to_baseB(T x, int b){
+	if (x==0) return "0";
+	string ans;
+	while(x!=0){
+		int num = x%b;
+		ans = (char)( (num<=9) ? ('0'+num) : ('A'+num-10) ) + ans;
+		x/=b;
+	}
+	return ans;
+}
+
+// b進数から10進数に変換
+template<class T>
+T to_base10(const string &x, int b){
+	T ans=0, base=1;
+	for(int i=x.length()-1; i>=0; --i){
+		int num = ('0'<=x[i]&&x[i]<='9') ? (x[i]-'0') : (x[i]-'A'+10);
+		ans+=base*num;
+		base*=b;
+	}
+	return ans;
+}
+
 // 2分探索
 template<class T>
 int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
@@ -635,6 +660,8 @@ int main() {
 	dump(pfact(100))
 	dump(divisor(100))
 	dump(eratosthenes(100))
+	dump(to_baseB(180, 16))
+	dump(to_base10<int>("B4", 16))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
