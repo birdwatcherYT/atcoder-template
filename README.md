@@ -17,8 +17,11 @@ atcoderのABC用C++テンプレ
     など
 - コンパイル後に自動的に実行するようにするにはMakefileの`# ./$@`のコメントアウトを外す
 
-`./AtCoderBeginnersSelection/`に[AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例を掲載
-
+## 具体例
+- [AtCoder Beginners Selection](https://atcoder.jp/contests/abs/tasks)を解く例
+    - `./AtCoderBeginnersSelection/`
+- [競プロ典型90問](https://atcoder.jp/contests/typical90/tasks)を解く例
+    - https://github.com/birdwatcherYT/atcoder-typical90
 
 ## 機能
 ### `vector<T>`の`ostream`/`istream`に対して演算子`<<`/`>>`を定義
