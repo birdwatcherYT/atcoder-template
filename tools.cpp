@@ -26,7 +26,7 @@
 #define EACH(e, v) for(auto &e : v)
 #define ITR(it, v) for(auto it = (v).begin(); it != (v).end(); ++it)
 #define RITR(it, v) for(auto it = (v).rbegin(); it != (v).rend(); ++it)
-#define CASE(x) break; case x:
+#define CASE break; case
 #define ALL(v)  (v).begin(), (v).end()
 #define RALL(v) (v).rbegin(), (v).rend()
 #define SZ(v) int((v).size())
@@ -243,13 +243,12 @@ vector<T> eratosthenes(T x){
 // 10進数からb進数に変換
 template<class T> 
 string to_baseB(T x, int b){
-	if (x==0) return "0";
 	string ans;
-	while(x!=0){
+	do{
 		int num = x%b;
 		ans = (char)( (num<=9) ? ('0'+num) : ('A'+num-10) ) + ans;
 		x/=b;
-	}
+	}while(x!=0);
 	return ans;
 }
 
@@ -643,8 +642,6 @@ vector< vector<T> > rotate90(const vector< vector<T> >& mat){
 		ans[j][i]=mat[m-1-i][j];
 	return ans;
 }
-
-
 
 // 最長増加部分列の長さ
 template<class T>
