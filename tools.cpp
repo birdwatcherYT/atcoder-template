@@ -225,6 +225,20 @@ vector<T> divisor(T x){
 	return ans;
 }
 
+// エラトステネスのふるい: x以下の素数列挙
+template<class T>
+vector<T> eratosthenes(T x){
+	vector<T> ans;
+	VB is_prime(x+1, true);
+	for (T i=2; i*i<=x; ++i){
+		if(!is_prime[i]) continue;
+		for(T j=2*i; j<=x; j+=i)
+			is_prime[j] = false;
+	}
+	for (T i=2; i<=x; ++i)
+		if (is_prime[i]) ans.push_back(i);
+	return ans;
+}
 
 // 2分探索
 template<class T>
@@ -620,6 +634,7 @@ int main() {
 	dump(extend_euclid(2LL, 1000000007LL))
 	dump(pfact(100))
 	dump(divisor(100))
+	dump(eratosthenes(100))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
