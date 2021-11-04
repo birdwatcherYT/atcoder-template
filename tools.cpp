@@ -193,7 +193,7 @@ T combi_mod(T n, T r, T mod){
 		ans = (ans*(i%mod))%mod;
 	for (T i = 1; i < r+1; ++i)
 		div = (div*(i%mod))%mod;
-	T inv_div = pow_mod(div, mod-2, mod); // 整数の逆元
+	T inv_div = inverse(div, mod); // 整数の逆元
 	return (ans * inv_div) % mod;
 }
 
