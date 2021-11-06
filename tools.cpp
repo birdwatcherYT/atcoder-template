@@ -521,12 +521,12 @@ template <class T>
 class SegmentTree {
 private:
 	T init_val; // 初期値
-	int num_leaves; // 2のべき
+	int num_leaves; // 葉の数 (2のべき)
 	vector<T> data, lazy;
-	VB upd;
+	VB upd; // 更新があるかどうかフラグ
 
 	T op(T a, T b){
-		return max(a, b); // ここを書き換えれば最小値, 合計値に対する木も作れる
+		return max(a, b); // ここを書き換えれば最小値や合計値に対する木も作れる (ただし合計値の場合, 区間の同時更新は無理) 
 	}
 	void __update(int a, int b, T val, int i, int l, int r) {
 		eval(i);
@@ -552,7 +552,7 @@ private:
 	}
 	void eval(int i) {
 		if (!upd[i]) return; // 更新が無ければスルー
-		if (i < num_leaves - 1) { // 葉でなければ子に伝搬
+		if (i < num_leaves - 1) { // 葉でなければ子に伝播
 			lazy[i * 2 + 1] = lazy[i];
 			lazy[i * 2 + 2] = lazy[i];
 			upd[i * 2 + 1] = true;
@@ -574,7 +574,7 @@ public:
 		lazy.resize(num_leaves*2-1, init_val);
 		upd.resize(num_leaves*2-1, false);
 	}
-	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新
+	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新 (ただし合計値の木には使えない)
 		__update(a, b, val, 0, 0, num_leaves);
 	}
 	void update(int i, T val) {// 値を更新
