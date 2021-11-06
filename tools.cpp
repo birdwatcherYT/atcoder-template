@@ -587,11 +587,13 @@ public:
 		return __query(i, i+1, 0, 0, num_leaves);
 	}
 	// 表示用
-	friend ostream& operator<<(ostream& os, SegmentTree& st){
-		st.query(0, st.num_leaves);
+	friend ostream& operator<<(ostream& os, const SegmentTree& st){
 		int br=1;
 		for (int i = 0; i < 2*st.num_leaves-1; ++i) {
-			os << st.data[i] << ", ";
+			os << st.data[i];
+			if (st.upd[i])
+				os << "(" << st.lazy[i] << ")";
+			os << ", ";
 			if (br==i+1){
 				os << endl;
 				br = 2*br+1;
@@ -731,5 +733,12 @@ int main() {
 	dump(bsearch(VI{1,1,2,2,2,4}, 2, false))
 	dump(bsearch(VI{1,1,2,2,2,4}, 8))
 	dump(bsearch(VI{1,1,2,2,2,4}, 8, false))
+	// 
+	SegmentTree st(8, 0);
+	st.update(1,5,10);
+	dump(st)
+	st.update(5,8,20);
+	dump(st)
+	dump(st.query(0,8))
 	return 0;
 }
