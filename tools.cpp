@@ -436,8 +436,7 @@ VI topological_sort(const VVI &adj, int n){
 class UnionFind {
 private:
 	int n;
-	VI parent; //親のノード情報、自身が親の場合はその集合のサイズを負で持つ
-	
+	VI parent; //親のノード情報、自身が根の場合はその集合のサイズを負で持つ
 public:
 	UnionFind(int n) : n(n), parent(n, -1){} // -1で初期化
 	// データxが属する木の根
@@ -447,9 +446,9 @@ public:
 	}
 	// xとyの木を併合
 	void merge(int x, int y) {
-        x = root(x);
-        y = root(y);
-        if (x == y) return;
+		x = root(x);
+		y = root(y);
+		if (x == y) return;
 		if (parent[x] > parent[y])
 			swap(x, y);
 		parent[x] += parent[y]; // 個数更新
