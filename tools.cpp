@@ -269,7 +269,7 @@ template<class T>
 int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
 	int left=0, right=SZ(vec)-1;
 	while(left <= right){
-		LL mid = (left+right)/2;
+		int mid = (left+right)/2;
 		T val = vec[mid]; // ここを任意の関数に書き換えてよく使う
 		if (val < key  // 降順の場合は不等号を逆にする
 			|| (!lower_bound && val == key))
