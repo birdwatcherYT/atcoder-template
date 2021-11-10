@@ -199,43 +199,43 @@ T combi_mod(T n, T r, T mod){
 
 // 素因数分解
 template<class T>
-vector<T> pfact(T x){
+vector<T> pfact(T n){
 	vector<T> ans;
-	for (T i=2; i*i<=x; ++i){
-		while(x%i==0){
-			x/=i;
+	for (T i=2; i*i<=n; ++i){
+		while(n%i==0){
+			n/=i;
 			ans.push_back(i);
 		}
 	}
-	if (x!=1)
-		ans.push_back(x);
+	if (n!=1)
+		ans.push_back(n);
 	return ans;
 }
 
 // 約数列挙
 template<class T>
-vector<T> divisor(T x){
+vector<T> divisor(T n){
 	vector<T> ans;
-	for (T i=1; i*i<=x; ++i){
-		if(x%i!=0) continue;
+	for (T i=1; i*i<=n; ++i){
+		if(n%i!=0) continue;
 		ans.push_back(i);
-		if (i!=(x/i)) ans.push_back(x/i);
+		if (i!=(n/i)) ans.push_back(n/i);
 	}
 	SORT(ans);
 	return ans;
 }
 
-// エラトステネスのふるい: x以下の素数列挙
+// エラトステネスのふるい: n以下の素数列挙
 template<class T>
-vector<T> eratosthenes(T x){
+vector<T> eratosthenes(T n){
 	vector<T> ans;
-	VB is_prime(x+1, true);
-	for (T i=2; i*i<=x; ++i){
+	VB is_prime(n+1, true);
+	for (T i=2; i*i<=n; ++i){
 		if(!is_prime[i]) continue;
-		for(T j=2*i; j<=x; j+=i)
+		for(T j=2*i; j<=n; j+=i)
 			is_prime[j] = false;
 	}
-	for (T i=2; i<=x; ++i)
+	for (T i=2; i<=n; ++i)
 		if (is_prime[i]) ans.push_back(i);
 	return ans;
 }
