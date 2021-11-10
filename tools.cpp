@@ -650,9 +650,9 @@ size_t LIS(const vector<T> &ary){
 	vector<T> dp;// 長さkである増加部分列のうち, 最後の要素の最小値
 	dp.reserve(ary.size());
 	for(T a : ary){
-		size_t i=INSPOS(dp, a);
-		if (i<dp.size())
-			dp[i]=a;
+		auto it = lower_bound(dp.begin(), dp.end(), a);
+		if (it != dp.end())
+			*it=a;
 		else
 			dp.push_back(a);
 	}
