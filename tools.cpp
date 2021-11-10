@@ -389,7 +389,7 @@ VVI sccd(const VVI &adj, int n){
 		if (!seen[s])
 			_sccd(adj, s, seen, visit);
 	}
-	// 2. DFSの順番に反転させたグラフをたどる
+	// 2. 反転させたグラフをDFSの逆順でたどる
 	VVI adj_rev(n);
 	REP(i, n)EACH(j, adj[i])
 		adj_rev[j].push_back(i);
