@@ -130,6 +130,7 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 template<class T>
 T pow_mod(T a, T n, T mod){
 	T ans = 1;
+	a %= mod;
 	while (n > 0) {
 		if ((n & 1))
 			ans = (ans * a) % mod;
