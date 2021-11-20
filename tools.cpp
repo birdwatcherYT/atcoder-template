@@ -660,6 +660,26 @@ size_t LIS(const vector<T> &ary){
 	return dp.size();
 }
 
+// スライド最小値: ans[i]=min{ary[i],...,ary[i+k-1]} (0<=i<=n-k)
+template<class T>
+vector<T> slide_min(const vector<T> &ary, int k){
+	vector<T> ans(ary.size()-k+1);
+	deque<int> q;
+	REP(i, SZ(ary)){
+		// 現在の値以上を持つ場合削除
+		while(!q.empty() && ary[q.back()] >= ary[i])
+			q.pop_back();
+		q.push_back(i);
+		if (i-k+1 >= 0) {
+			ans[i-k+1] = ary[q.front()];
+			// ウィンドウから外れるため削除
+			if (q.front() == i-k+1)
+				q.pop_front();
+		}
+	}
+	return ans;
+}
+
 int main() {
 	// 数学
 	dump(combi(4, 2))
@@ -733,6 +753,7 @@ int main() {
 	dump(bsearch(VI{1,1,2,2,2,4}, 2, false))
 	dump(bsearch(VI{1,1,2,2,2,4}, 8))
 	dump(bsearch(VI{1,1,2,2,2,4}, 8, false))
+	dump(slide_min(VI{1,4,2,6,3,5}, 3))
 	// 
 	SegmentTree st(8, 0);
 	st.update(1,5,10);
