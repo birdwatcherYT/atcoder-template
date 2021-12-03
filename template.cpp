@@ -15,7 +15,7 @@
 #include <stack>
 #include <numeric>
 #include <cassert> // assert();
-#include <iomanip> // cout << setprecision(15);
+#include <iomanip> // cout << setprecision(15); cout << setfill('0') << std::right << setw(3);
 #define _PI     3.14159265358979323846
 #define _E      2.7182818284590452354
 #define INF     (INT_MAX / 2)
