@@ -436,6 +436,24 @@ VI topological_sort(const VVI &adj, int n){
 	return ans;
 }
 
+// ループを持つかどうか
+bool _contains_loop(const VVI &adj, int s, VB &seen, int prev){
+	if (seen[s])
+		return true;
+	seen[s] = true;
+	EACH(to, adj[s])
+		if (prev!=to && _contains_loop(adj, to, seen, s))
+			return true;
+	return false;
+}
+bool contains_loop(const VVI &adj, int n){
+	VB seen(n, false);
+	REP(i, n)
+		if (!seen[i] && _contains_loop(adj, i, seen, -1))
+			return true;
+	return false;
+}
+
 class UnionFind {
 private:
 	int n;
@@ -742,6 +760,8 @@ int main() {
 	}
 	dump(adj2)
 	dump(sccd(adj2, n2))
+	// ループチェック
+	dump(contains_loop(adj2, n2))
 	// UnionFind
 	UnionFind uf(5);
 	uf.merge(1,2);
