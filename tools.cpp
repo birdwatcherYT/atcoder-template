@@ -128,6 +128,16 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 
 // --------------------ここから--------------------
 
+template<class T>
+vector<T> cumsum(const vector<T> &vec, bool zero_start){
+	int n = SZ(vec) + zero_start;
+	vector<T> cumsum(n);
+	cumsum[0] = zero_start ? 0 : vec[0];
+	FOR(i, 1, n)
+		cumsum[i] = cumsum[i-1] + vec[i - zero_start];
+	return cumsum;
+}
+
 // a^n % mod
 template<class T>
 T pow_mod(T a, T n, T mod){
@@ -702,6 +712,8 @@ vector<T> slide_min(const vector<T> &ary, int k){
 
 int main() {
 	// 数学
+	dump(cumsum(VI{1,2,3,4,5}, false))
+	dump(cumsum(VI{1,2,3,4,5}, true))
 	dump(combi(4, 2))
 	dump(combi_mod(4, 2, 5))
 	dump(pow_mod(5, 5, 100))
