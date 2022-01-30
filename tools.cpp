@@ -316,6 +316,25 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 	return dist;
 }
 
+// Bellman-Ford: 始点sからその他頂点への最短距離を返す(負の距離があってもよいがO(頂点数x辺の数)かかる)
+template<class T>
+vector<T> bellman_ford(const vector< vector< pair<int, T> > > &adj, int n, int s){
+	vector<T> dist(n, numeric_limits<T>::max()/2);
+	dist[s] = 0;
+	REP(i, n-1){// 各頂点
+		REP(from, n) for(const auto &[to, cost]: adj[from]){// 各辺
+			if (dist[from] + cost < dist[to])
+				dist[to] = dist[from] + cost;
+		}
+	}
+	// 負の閉路チェック
+	REP(from, n) for(const auto &[to, cost]: adj[from]){// 各辺
+		if (dist[from] + cost < dist[to])
+			return vector<T>();
+	}
+	return dist;
+}
+
 // Floyd–Warshall: 全ペアの最短経路
 template<class T>
 vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (移動コスト行列, 頂点数)
@@ -326,6 +345,8 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 		cost_min[i][j]=min(cost_min[i][j], cost_min[i][k]+cost_min[k][j]);
 	return cost_min;
 }
+
+
 
 // 幅優先で訪問したノードの順番を返す
 VI bfs(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数, 始点)
@@ -745,6 +766,7 @@ int main() {
 	}
 	dump(adj1)
 	dump(dijkstra(adj1, n1, start))
+	dump(bellman_ford(adj1, n1, start))
 	dump(bfs(adj1, n1, start))
 	dump(dfs(adj1, n1, start))
 	dump(dfs_recursive(adj1, n1, start))
