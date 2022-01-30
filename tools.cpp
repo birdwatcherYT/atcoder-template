@@ -13,6 +13,7 @@
 #include <string>
 #include <queue>
 #include <stack>
+#include <list>
 #include <numeric>
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15); cout << setfill('0') << std::right << setw(3);
