@@ -732,6 +732,102 @@ vector<T> slide_min(const vector<T> &ary, int k){
 	return ans;
 }
 
+template<LL MOD>
+class ModInt {
+	LL x;
+public:
+	constexpr ModInt(const LL &x = 0LL) {
+		this->x = x % MOD;
+		if(this->x < 0LL) this->x += MOD;
+	}
+	constexpr ModInt operator-() const { 
+		return ModInt(-x);
+	}
+	constexpr ModInt& operator++() { 
+		if ((x += 1LL) >= MOD) x -= MOD;
+		return *this;
+	}
+	constexpr ModInt& operator--() { 
+		if ((x -= 1LL) < 0LL) x += MOD;
+		return *this;
+	}
+	constexpr ModInt operator++(int) { 
+		ModInt tmp(*this);
+		++this;
+		return tmp;
+	}
+	constexpr ModInt operator--(int) { 
+		ModInt tmp(*this);
+		--this;
+		return tmp;
+	}
+	constexpr bool operator == (const ModInt& a) const {
+		return x == a.x;
+	}
+	constexpr bool operator != (const ModInt& a) const {
+		return x != a.x;
+	}
+	constexpr ModInt operator+(const ModInt& a) const {
+		return ModInt(*this)+=a;
+	}
+	constexpr ModInt operator-(const ModInt& a) const {
+		return ModInt(*this)-=a;
+	}
+	constexpr ModInt operator*(const ModInt& a) const {
+		return ModInt(*this)*=a;
+	}
+	constexpr ModInt operator/(const ModInt& a) const {
+		return ModInt(*this)/=a;
+	}
+	constexpr ModInt& operator+=(const ModInt& a) {
+		if ((x += a.x) >= MOD) x -= MOD;
+		return *this;
+	}
+	constexpr ModInt& operator-=(const ModInt& a) {
+		if ((x -= a.x) < 0LL) x += MOD;
+		return *this;
+	}
+	constexpr ModInt& operator*=(const ModInt& a) {
+		x = (x * a.x) % MOD;
+		return *this;
+	}
+	constexpr ModInt& operator/=(const ModInt& a) {
+		return (*this) *= a.inv();
+	}
+	constexpr ModInt pow(LL n) const {
+		ModInt ans(1LL), tmp(*this);
+		while (n > 0) {
+			if ((n & 1LL))
+				ans *= tmp;
+			tmp *= tmp;
+			n >>= 1;
+		}
+		return ans;
+	}
+	constexpr ModInt inv() const {
+		LL x0 = 1LL, x1 = 0LL, x2, y0 = 0LL, y1 = 1LL, y2, r0 = x, r1 = MOD, r2, q2;
+		while (r1 != 0LL) {
+			q2 = r0 / r1;
+			r2 = r0 % r1;
+			x2 = x0 - q2 * x1;
+			y2 = y0 - q2 * y1;
+			x0 = x1; x1 = x2;
+			y0 = y1; y1 = y2;
+			r0 = r1; r1 = r2;
+		}
+		assert (r0 == 1LL);
+		return ModInt(x0);
+		// return pow(MOD-2LL);
+	}
+	constexpr LL value() const {
+		return x;
+	}
+	friend ostream& operator<<(ostream& os, const ModInt& a){
+		os << a.x;
+		return os;
+	}
+};
+
 int main() {
 	// 数学
 	dump(cumsum(VI{1,2,3,4,5}, false))
