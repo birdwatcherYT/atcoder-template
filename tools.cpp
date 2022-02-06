@@ -192,7 +192,7 @@ template<class T>
 T combi(T n, T r){
 	r = (r > n / 2) ? n - r : r;
 	T ans = 1;
-	for (int i = 1; i <= r; i++, n--) {
+	for (T i = 1; i <= r; i++, n--) {
 		ans *= n;
 		ans /= i;
 	}
