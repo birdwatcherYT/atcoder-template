@@ -349,7 +349,8 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 
 
 // 幅優先で訪問したノードの順番を返す
-VI bfs(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数, 始点)
+template<class T>
+VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
 	queue<int> que;
 	que.push(s);
 	VB seen(n, false);
@@ -370,7 +371,8 @@ VI bfs(const vector< vector<PII> > &adj, int n, int s){ // (隣接, ノード数
 }
 
 // 深さ優先で訪問したノードの順番を返す
-VI dfs(const vector< vector<PII> > &adj, int n, int s){  // (隣接, ノード数, 始点)
+template<class T>
+VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, ノード数, 始点)
 	stack<int> st;
 	st.push(s);
 	VB seen(n, false);
@@ -391,7 +393,8 @@ VI dfs(const vector< vector<PII> > &adj, int n, int s){  // (隣接, ノード�
 }
 
 // 深さ優先（再帰）で訪問したノードの順番を返す
-void _dfs_recursive(const vector< vector<PII> > &adj, int n, int s, VB &seen, VI &visit){
+template<class T>
+void _dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s, VB &seen, VI &visit){
 	if (!seen[s])
 		visit.push_back(s);
 	seen[s] = true;
@@ -400,7 +403,8 @@ void _dfs_recursive(const vector< vector<PII> > &adj, int n, int s, VB &seen, VI
 			_dfs_recursive(adj, n, to, seen, visit);
 	}
 }
-VI dfs_recursive(const vector< vector<PII> > &adj, int n, int s){
+template<class T>
+VI dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s){
 	VB seen(n, false);
 	VI visit;
 	_dfs_recursive(adj, n, s, seen, visit);
