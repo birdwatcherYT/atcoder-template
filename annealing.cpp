@@ -18,6 +18,7 @@
 #include <fstream>
 #include <random>
 #include <chrono>
+#include <thread>
 #define _PI	 3.14159265358979323846
 #define _E	  2.7182818284590452354
 #define INF	 (INT_MAX / 2)
@@ -142,18 +143,32 @@ int get_rand(int l, int u){
 	uniform_int_distribution<int> rand_lu(l, u-1);
 	return rand_lu(rand_engine);
 }
+// 画面クリア
+void clear_screen(){
+	cout << "\x1b[0;0H";
+}
+// スリープ
+void sleep(int msec){
+	this_thread::sleep_for(chrono::milliseconds(msec));
+}
 
 // データ
+const bool DEBUG = true;
 const string DATA_DIR = "./";
 const int N = 15;
 vector<string> raw_data(N);
 void data_load(){
-	OUT("data_load");
-	const string file_path = DATA_DIR + "annealing.cpp";
-	ifstream ifs(file_path);
-	assert(!ifs.fail());
+	ifstream ifs;
+	if (DEBUG){
+		OUT("data_load");
+		const string file_path = DATA_DIR + "annealing.cpp";
+		ifs.open(file_path);
+		assert(!ifs.fail());
+	}
+	istream &is = DEBUG ? ifs: cin;
+
 	// データ読み込み ----------
-	ifs >> raw_data;
+	is >> raw_data;
 	// ------------------------
 }
 
@@ -163,7 +178,7 @@ struct State {
 
 	State(){}
 	void initialize(){
-		OUT("initialize");
+		if(DEBUG) OUT("initialize");
 		// 初期解 ----------
 		vec.resize(N);
 		ARANGE(vec);
@@ -183,7 +198,7 @@ struct State {
 };
 
 void optimize(int loop_max, int verbose){
-	OUT("optimize");
+	if(DEBUG) OUT("optimize");
 	double start_temp = 0.1;
 	double end_temp	= 0.001;
 	
@@ -191,7 +206,7 @@ void optimize(int loop_max, int verbose){
 	state.initialize();
 	
 	auto [annealing_score, score] = state.get_score();
-	OUT("initial score:", annealing_score, "\t", score);
+	if(DEBUG) OUT("initial score:", annealing_score, "\t", score);
 
 	REP(loop, loop_max){
 		double temp = start_temp + (end_temp - start_temp) * loop / loop_max;
@@ -213,7 +228,7 @@ void optimize(int loop_max, int verbose){
 		auto [current_annealing_score, current_score] = state.get_score();
 		
 		if (loop % verbose == 0)
-			OUT(loop, "\t:", annealing_score, "\t", score);
+			if(DEBUG) OUT(loop, "\t:", annealing_score, "\t", score);
 
 		double probability = exp((annealing_score-current_annealing_score) / temp); 
 		if (current_annealing_score < annealing_score){
@@ -241,8 +256,10 @@ void optimize(int loop_max, int verbose){
 			}
 		}
 	}
-	OUT("final score:", annealing_score, "\t", score);
-	dump(state.vec)
+	if(DEBUG){
+		OUT("final score:", annealing_score, "\t", score);
+		dump(state.vec)
+	}
 }
 
 // int -> str: to_string(i)
@@ -254,6 +271,6 @@ int main() {
 	optimize(1000000, 10000);
 	auto end = chrono::system_clock::now();
 	auto msec = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	OUT("msec: ", msec);
+	if(DEBUG) OUT("msec: ", msec);
 	return 0;
 }
