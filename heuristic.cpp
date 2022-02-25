@@ -161,7 +161,7 @@ void data_load(){
 	ifstream ifs;
 	if (DEBUG){
 		OUT("data_load");
-		const string file_path = DATA_DIR + "annealing.cpp";
+		const string file_path = DATA_DIR + "heuristic.cpp";
 		ifs.open(file_path);
 		assert(!ifs.fail());
 	}
@@ -197,8 +197,8 @@ struct State {
 	}
 };
 
-void optimize(int loop_max, int verbose){
-	if(DEBUG) OUT("optimize");
+void annealing(int loop_max, int verbose){
+	if(DEBUG) OUT("annealing");
 	double start_temp = 0.1;
 	double end_temp	= 0.001;
 	
@@ -268,7 +268,7 @@ void optimize(int loop_max, int verbose){
 int main() {
 	data_load();
 	auto start = chrono::system_clock::now();
-	optimize(1000000, 10000);
+	annealing(1000000, 10000);
 	auto end = chrono::system_clock::now();
 	auto msec = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 	if(DEBUG) OUT("msec: ", msec);
