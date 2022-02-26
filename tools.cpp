@@ -346,7 +346,46 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 	return cost_min;
 }
 
+// 増加可能経路を探し, 増加分のフローを返す
+// adj[i]: (j, capacity, 逆向き辺のindex)のリスト
+template<class T>
+T _max_flow(vector< vector< tuple<int, T, int> > >& adj, int v, int t, T f, VB &visit) {
+	if (v == t) return f;
+	visit[v] = true;
+	for (auto& [to, cap, rev] : adj[v]) {
+		if (!visit[to] && cap > 0) {
+			T d = _max_flow(adj, to, t, min(f, cap), visit);
+			if (d > 0) {
+				cap -= d;
+				T &rev_cap = get<1>(adj[to][rev]);
+				rev_cap += d;
+				return d;
+			}
+		}
+	}
+	return 0;
+}
+// Ford-Fullkerson法: s-t最大フロー
+template<class T>
+T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
+	// _adj[i]: (j, capacity, 逆向き辺のindex)のリスト
+	vector< vector< tuple<int, T, int> > > _adj(n);
+	REP(i, n){
+		for(const auto&[j, cap]: adj[i]){
+			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
+			_adj[i].push_back({j, cap, size_j});
+			_adj[j].push_back({i, 0, size_i});// キャパゼロの逆向き辺
+		}
+	}
 
+	T flow = 0, f = 0;
+	VB visit(n, false);
+	while ((f = _max_flow(_adj, s, t, numeric_limits<T>::max()/2, visit)) > 0) { // 増加分
+		flow += f;
+		fill(ALL(visit), false);
+	}
+	return flow;
+}
 
 // 幅優先で訪問したノードの順番を返す
 template<class T>
