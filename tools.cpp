@@ -388,6 +388,66 @@ T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
 	return flow;
 }
 
+
+// 最小費用流: s->t
+template<class CAP, class COST>
+COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, int s, int t, CAP init_flow) {
+	// adj[i]: (j, capacity, cost, 逆向き辺のindex)のリスト
+	vector< vector< tuple<int, CAP, COST, int> > > _adj;
+	REP(i, n){
+		for(const auto&[j, cap, cost]: adj[i]){
+			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
+			_adj[i].push_back({j, cap, cost, size_j});
+			_adj[j].push_back({i, 0, -cost, size_i});// キャパゼロの逆向き辺
+		}
+	}
+
+	const COST _INF = numeric_limits<COST>::max()/2;
+	COST dist[n];
+	int prev_vertex[n];
+	int prev_index[n];
+
+	COST ans = 0;
+	CAP flow = init_flow;
+	while (flow > 0) {
+		fill(ALL(dist), _INF);
+		dist[s] = 0;
+		while (true) {
+			bool update = false;
+			REP(v, n){
+				if (dist[v] != _INF) continue;
+				REP(i, SZ(_adj[v])) {
+					const auto &[to, cap, cost, rev] = _adj[v][i];
+					if (cap > 0 && dist[to] > dist[v] + cost) {
+						dist[to] = dist[v] + cost;
+						prev_vertex[to] = v;
+						prev_index[to] = i;
+						update = true;
+					}
+				}
+			}
+			if (!update) break;
+		}
+
+		if (dist[t] == _INF) return _INF;
+
+		CAP d = flow;
+		for (int v = t; v != s; v = prev_vertex[v]) {
+			const CAP& cap = get<1>(_adj[prev_vertex[v]][prev_index[v]]);
+			d = min(d, cap);
+		}
+		flow -= d;
+		ans += dist[t] * d;
+		for (int v = t; v != s; v = prev_vertex[v]) {
+			auto &[to, cap, cost, rev] = _adj[prev_vertex[v]][prev_index[v]];
+			CAP &rev_cap = get<1>(_adj[to][rev]);
+			cap -= d;
+			rev_cap += d;
+		}
+	}
+	return ans;
+}
+
 // 幅優先で訪問したノードの順番を返す
 template<class T>
 VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
