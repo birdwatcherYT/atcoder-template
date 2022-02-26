@@ -175,6 +175,7 @@ void data_load(){
 // 状態
 struct State {
 	VI vec;
+	double score;
 
 	State(){}
 	void initialize(){
@@ -185,15 +186,27 @@ struct State {
 		shuffle(ALL(vec), rand_engine);
 		// ----------------
 	}
-	tuple<double, double> get_score() {
+	tuple<double, double> calc_score() {
 		double annealing_score = 0;
-		double score = 0;
+		score = 0;
 		// スコア ----------
 		REP(i, N-1)
 			score += (vec[i]<vec[i+1]);
 		annealing_score = -score;
 		// -----------------
 		return {annealing_score, score};
+	}
+	// ターンがあるような場合
+	vector<State> next_states() const {
+		// 未実装
+		vector<State> next;
+		return next;
+	}
+	bool operator<(const State& s) const {
+		return score < s.score;
+	}
+	bool operator>(const State& s) const {
+		return score > s.score;
 	}
 };
 
@@ -205,7 +218,7 @@ void annealing(int loop_max, int verbose){
 	State state;
 	state.initialize();
 	
-	auto [annealing_score, score] = state.get_score();
+	auto [annealing_score, score] = state.calc_score();
 	if(DEBUG) OUT("initial score:", annealing_score, "\t", score);
 
 	REP(loop, loop_max){
@@ -225,10 +238,10 @@ void annealing(int loop_max, int verbose){
 				swap(state.vec[j], state.vec[k]);
 			}
 		}
-		auto [current_annealing_score, current_score] = state.get_score();
+		auto [current_annealing_score, current_score] = state.calc_score();
 		
-		if (loop % verbose == 0)
-			if(DEBUG) OUT(loop, "\t:", annealing_score, "\t", score);
+		if (DEBUG && loop % verbose == 0)
+			OUT(loop, "\t:", annealing_score, "\t", score);
 
 		double probability = exp((annealing_score-current_annealing_score) / temp); 
 		if (current_annealing_score < annealing_score){
@@ -261,6 +274,66 @@ void annealing(int loop_max, int verbose){
 		dump(state.vec)
 	}
 }
+
+void chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_width){
+	if(DEBUG) OUT("chokudai_search");
+	State init;
+	init.initialize();
+	
+	auto [_, score] = init.calc_score();
+	if(DEBUG) OUT("initial score:", score);
+
+	// スコアが大きいほど良い
+	vector< MAXPQ<State> > pq(max_turn+1);
+	pq[0].push(init);
+	REP(loop, loop_max){
+		REP(turn, max_turn){ // 各ターン
+			REP(_, chokudai_width){
+				if(pq[turn].empty()) break;
+				// 先頭参照
+				const State &state = pq[turn].top();
+				for(State& next : state.next_states()){
+					next.calc_score();
+					pq[turn+1].push(next);
+				}
+				// 先頭削除
+				pq[turn].pop();
+			}
+		}
+		if (DEBUG && loop % verbose == 0)
+			OUT(loop, "\t:", pq[max_turn].top().score);
+	}
+}
+
+void beam_search(int loop_max, int verbose, int max_turn, int beam_width){
+	if(DEBUG) OUT("beam_search");
+	State init;
+	init.initialize();
+	
+	auto [_, score] = init.calc_score();
+	if(DEBUG) OUT("initial score:", score);
+
+	vector<State> top_states;
+	top_states.push_back(init);
+	REP(turn, max_turn){ // 各ターン
+		vector<State> next_states;
+		for(const State &state : top_states) {
+			for(State& next : state.next_states()){
+				next.calc_score();
+				next_states.push_back(next);
+			}
+			// スコアが大きいほど良い
+			RSORT(next_states);
+			// 上位beam_width個まで絞る
+			while(SZ(next_states)>beam_width)
+				next_states.pop_back();
+		}
+		top_states = next_states;
+		if (DEBUG)
+			OUT(turn, "\t:", top_states.front().score);
+	}
+}
+
 
 // int -> str: to_string(i)
 // str -> int: stoi(s)
