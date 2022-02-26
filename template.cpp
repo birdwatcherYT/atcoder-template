@@ -116,6 +116,7 @@ using VC = vector<char>; using VS = vector<string>;
 using PII = pair<int,int>; using PLL = pair<LL,LL>;
 using MII = map<int,int>; using MLL = map<LL,LL>;
 using SI = set<int>; using SL = set<LL>;
+using MSI = multiset<int>; using MSL = multiset<LL>;
 template<class T> using MAXPQ = priority_queue<T>;
 template<class T> using MINPQ = priority_queue< T, vector<T>, greater<T> >;
 
