@@ -578,7 +578,6 @@ bool _contains_loop(const VVI &adj, int s, VB &seen, int prev, bool direct){
 		return true;
 	seen[s] = true;
 	EACH(to, adj[s]){
-		if(s==to) return true;// 自己ループ
 		if(direct && prev==to) return true;// 有向グラフで頂点間を行き来できる場合
 		if (prev!=to && _contains_loop(adj, to, seen, s, direct))
 			return true;
