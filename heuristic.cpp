@@ -120,6 +120,10 @@ using MII = map<int,int>; using MLL = map<LL,LL>;
 using SI = set<int>; using SL = set<LL>;
 template<class T> using MAXPQ = priority_queue<T>;
 template<class T> using MINPQ = priority_queue< T, vector<T>, greater<T> >;
+// int -> str: to_string(i)
+// str -> int: stoi(s)
+// vec -> set: set<int> s(ALL(v));
+// 1が立っている数: __builtin_popcount(i), __builtin_popcountll(i)
 
 template <class Head> void IN(Head&& head) {cin >> head;}
 template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
@@ -334,10 +338,6 @@ void beam_search(int loop_max, int verbose, int max_turn, int beam_width){
 	}
 }
 
-
-// int -> str: to_string(i)
-// str -> int: stoi(s)
-// vec -> set: set<int> s(ALL(v));
 int main() {
 	data_load();
 	auto start = chrono::system_clock::now();
