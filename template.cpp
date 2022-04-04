@@ -119,6 +119,10 @@ using SI = set<int>; using SL = set<LL>;
 using MSI = multiset<int>; using MSL = multiset<LL>;
 template<class T> using MAXPQ = priority_queue<T>;
 template<class T> using MINPQ = priority_queue< T, vector<T>, greater<T> >;
+// int -> str: to_string(i)
+// str -> int: stoi(s)
+// vec -> set: set<int> s(ALL(v));
+// 1が立っている数: __builtin_popcount(i), __builtin_popcountll(i)
 
 istringstream debug_iss(R"(
 デバッグ時はここに入力を貼り付けて下記マクロのコメントアウトを外す
@@ -128,9 +132,6 @@ istringstream debug_iss(R"(
 template <class Head> void IN(Head&& head) {cin >> head;}
 template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
 
-// int -> str: to_string(i)
-// str -> int: stoi(s)
-// vec -> set: set<int> s(ALL(v));
 int main() {
 	int n;
 	IN(n);
