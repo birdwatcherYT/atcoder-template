@@ -573,19 +573,21 @@ VI topological_sort(const VVI &adj, int n){
 }
 
 // ループを持つかどうか
-bool _contains_loop(const VVI &adj, int s, VB &seen, int prev){
+bool _contains_loop(const VVI &adj, int s, VB &seen, int prev, bool direct){
 	if (seen[s])
 		return true;
 	seen[s] = true;
-	EACH(to, adj[s])
-		if (prev!=to && _contains_loop(adj, to, seen, s))
+	EACH(to, adj[s]){
+		if(direct && prev==to) return true;// 有向グラフで頂点間を行き来できる場合
+		if (prev!=to && _contains_loop(adj, to, seen, s, direct))
 			return true;
+	}
 	return false;
 }
-bool contains_loop(const VVI &adj, int n){
+bool contains_loop(const VVI &adj, int n, bool direct){// direct: 有向グラフならtrue
 	VB seen(n, false);
 	REP(i, n)
-		if (!seen[i] && _contains_loop(adj, i, seen, -1))
+		if (!seen[i] && _contains_loop(adj, i, seen, -1, direct))
 			return true;
 	return false;
 }
@@ -996,7 +998,7 @@ int main() {
 	dump(adj2)
 	dump(sccd(adj2, n2))
 	// ループチェック
-	dump(contains_loop(adj2, n2))
+	dump(contains_loop(adj2, n2, false))
 	// UnionFind
 	UnionFind uf(5);
 	uf.merge(1,2);
