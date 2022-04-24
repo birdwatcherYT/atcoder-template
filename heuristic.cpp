@@ -155,24 +155,31 @@ void clear_screen(){
 void sleep(int msec){
 	this_thread::sleep_for(chrono::milliseconds(msec));
 }
+// 数字ゼロ埋め文字列
+string to_string_zerofill(int num, int digit){
+	std::ostringstream sout;
+	sout << std::setfill('0') << std::setw(digit) << num;
+	return sout.str();
+}
 
 // データ
 const bool DEBUG = true;
-const string DATA_DIR = "./";
-const int N = 15;
-vector<string> raw_data(N);
-void data_load(){
-	ifstream ifs;
-	if (DEBUG){
-		OUT("data_load");
-		const string file_path = DATA_DIR + "heuristic.cpp";
-		ifs.open(file_path);
-		assert(!ifs.fail());
-	}
-	istream &is = DEBUG ? ifs: cin;
-
+// const bool DEBUG = false;
+int N;
+VI init_vec;
+void data_load(istream &is){
 	// データ読み込み ----------
-	is >> raw_data;
+	is >> N;
+	init_vec.resize(N);
+	is >> init_vec;
+	// ------------------------
+}
+void data_generate(){
+	// データ生成 --------------
+	N = get_rand(10, 16);
+	init_vec.resize(N);
+	ARANGE(init_vec);
+	shuffle(ALL(init_vec), rand_engine);
 	// ------------------------
 }
 
@@ -185,9 +192,7 @@ struct State {
 	void initialize(){
 		if(DEBUG) OUT("initialize");
 		// 初期解 ----------
-		vec.resize(N);
-		ARANGE(vec);
-		shuffle(ALL(vec), rand_engine);
+		vec = init_vec;
 		// ----------------
 	}
 	tuple<double, double> calc_score() {
@@ -199,6 +204,11 @@ struct State {
 		annealing_score = -score;
 		// -----------------
 		return {annealing_score, score};
+	}
+	void print_answer(){
+		// 答え表示 ---------
+		OUT(vec);
+		// -----------------
 	}
 	// ターンがあるような場合
 	vector<State> next_states() const {
@@ -214,7 +224,7 @@ struct State {
 	}
 };
 
-void annealing(int loop_max, int verbose){
+double annealing(int loop_max, int verbose){
 	if(DEBUG) OUT("annealing");
 	double start_temp = 0.1;
 	double end_temp	= 0.001;
@@ -275,11 +285,12 @@ void annealing(int loop_max, int verbose){
 	}
 	if(DEBUG){
 		OUT("final score:", annealing_score, "\t", score);
-		dump(state.vec)
+		state.print_answer();
 	}
+	return score;
 }
 
-void chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_width){
+double chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_width){
 	if(DEBUG) OUT("chokudai_search");
 	State init;
 	init.initialize();
@@ -307,9 +318,10 @@ void chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_width
 		if (DEBUG && loop % verbose == 0)
 			OUT(loop, "\t:", pq[max_turn].top().score);
 	}
+	return pq[max_turn].top().score;
 }
 
-void beam_search(int loop_max, int verbose, int max_turn, int beam_width){
+double beam_search(int loop_max, int verbose, int max_turn, int beam_width){
 	if(DEBUG) OUT("beam_search");
 	State init;
 	init.initialize();
@@ -336,14 +348,39 @@ void beam_search(int loop_max, int verbose, int max_turn, int beam_width){
 		if (DEBUG)
 			OUT(turn, "\t:", top_states.front().score);
 	}
+	return top_states.front().score;
 }
 
+const string DATA_DIR = "./data/";
 int main() {
-	data_load();
-	auto start = chrono::system_clock::now();
-	annealing(1000000, 10000);
-	auto end = chrono::system_clock::now();
-	auto msec = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	if(DEBUG) OUT("msec: ", msec);
+	int case_num = DEBUG ? 5 : 1;
+	double sum_score = 0.0;
+	REP(i, case_num){
+		auto start = chrono::system_clock::now();
+		if (DEBUG){
+			OUT("data_load");
+			string filename = to_string_zerofill(i, 4) + ".txt";
+			string file_path = DATA_DIR + filename;
+			ifstream ifs(file_path);
+			assert(!ifs.fail());
+			data_load(ifs);
+			// data_generate();
+		}else{
+			data_load(cin);
+		}
+		double score = annealing(1000000, 100000);
+		auto end = chrono::system_clock::now();
+		auto msec = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+		if(DEBUG) {
+			sum_score += score;
+			OUT("--------------------");
+			OUT("case_num: ", i);
+			OUT("score: ", score);
+			OUT("msec: ", msec);
+			OUT("mean_score: ", sum_score/(i+1));
+			OUT("sum_score: ", sum_score);
+			OUT("--------------------");
+		}
+	}
 	return 0;
 }
