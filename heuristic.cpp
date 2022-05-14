@@ -111,9 +111,9 @@ template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集�
 }
 
 using LL = long long; using ULL = unsigned long long;
-using VI = vector<int>; using VVI = vector<VI>;
-using VL = vector<LL>; using VVL = vector<VL>;
-using VB = vector<bool>; using VVB = vector<VB>;
+using VI = vector<int>; using VVI = vector<VI>; using VVVI = vector<VVI>;
+using VL = vector<LL>; using VVL = vector<VL>; using VVVL = vector<VVL>;
+using VB = vector<bool>; using VVB = vector<VB>; using VVVB = vector<VVB>;
 using VC = vector<char>; using VS = vector<string>;
 using PII = pair<int,int>; using PLL = pair<LL,LL>;
 using MII = map<int,int>; using MLL = map<LL,LL>;
