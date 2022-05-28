@@ -210,6 +210,7 @@ void data_generate(){
 struct State {
 	VI vec;
 	double score;
+	double annealing_score;
 
 	State(){}
 	void initialize(){
@@ -219,7 +220,7 @@ struct State {
 		// ----------------
 	}
 	tuple<double, double> calc_score() {
-		double annealing_score = 0;
+		annealing_score = 0;
 		score = 0;
 		// スコア ----------
 		REP(i, N-1)
