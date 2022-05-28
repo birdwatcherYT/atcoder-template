@@ -170,7 +170,7 @@ public:
 	ClockTimer(){}
 	inline void start() { _start = clock(); }
 	inline void end() { _end = clock(); }
-	inline double time() { return (double)(_end-_start) / CLOCKS_PER_SEC; }
+	inline double time() const { return (double)(_end-_start) / CLOCKS_PER_SEC; }
 };
 
 // chronoは処理系によってCPU時間か実時間か変わるため注意
@@ -181,7 +181,7 @@ public:
 	ChronoTimer(){}
 	inline void start() { _start = chrono::high_resolution_clock::now(); }
 	inline void end() { _end = chrono::high_resolution_clock::now(); }
-	inline int64_t time() { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }
+	inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }
 };
 
 
@@ -377,7 +377,7 @@ double beam_search(int max_turn, int beam_width){
 
 const string DATA_DIR = "./data/";
 int main() {
-	ClockTimer timer;
+	ChronoTimer timer;
 	int case_num = DEBUG ? 5 : 1;
 	double sum_score = 0.0;
 	REP(i, case_num){
