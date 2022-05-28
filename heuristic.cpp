@@ -162,6 +162,29 @@ string to_string_zerofill(int num, int digit){
 	return sout.str();
 }
 
+// CPU時間
+class ClockTimer{
+private:
+	clock_t _start, _end;
+public:
+	ClockTimer(){}
+	inline void start() { _start = clock(); }
+	inline void end() { _end = clock(); }
+	inline double time() { return (double)(_end-_start) / CLOCKS_PER_SEC; }
+};
+
+// chronoは処理系によってCPU時間か実時間か変わるため注意
+class ChronoTimer{
+private:
+	chrono::high_resolution_clock::time_point _start, _end;
+public:
+	ChronoTimer(){}
+	inline void start() { _start = chrono::high_resolution_clock::now(); }
+	inline void end() { _end = chrono::high_resolution_clock::now(); }
+	inline int64_t time() { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }
+};
+
+
 // データ
 const bool DEBUG = true;
 // const bool DEBUG = false;
@@ -353,10 +376,11 @@ double beam_search(int max_turn, int beam_width){
 
 const string DATA_DIR = "./data/";
 int main() {
+	ClockTimer timer;
 	int case_num = DEBUG ? 5 : 1;
 	double sum_score = 0.0;
 	REP(i, case_num){
-		auto start = chrono::system_clock::now();
+		timer.start();
 		if (DEBUG){
 			OUT("data_load");
 			string filename = to_string_zerofill(i, 4) + ".txt";
@@ -369,14 +393,13 @@ int main() {
 			data_load(cin);
 		}
 		double score = annealing(1000000, 100000);
-		auto end = chrono::system_clock::now();
-		auto msec = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+		timer.end();
 		if(DEBUG) {
 			sum_score += score;
 			OUT("--------------------");
 			OUT("case_num: ", i);
 			OUT("score: ", score);
-			OUT("msec: ", msec);
+			OUT("time: ", timer.time());
 			OUT("mean_score: ", sum_score/(i+1));
 			OUT("sum_score: ", sum_score);
 			OUT("--------------------");
