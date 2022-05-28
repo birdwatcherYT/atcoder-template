@@ -220,14 +220,14 @@ struct State {
 		// ----------------
 	}
 	tuple<double, double> calc_score() {
-		annealing_score = 0;
 		score = 0;
+		annealing_score = 0;
 		// スコア ----------
 		REP(i, N-1)
 			score += (vec[i]<vec[i+1]);
 		annealing_score = -score;
 		// -----------------
-		return {annealing_score, score};
+		return {score, annealing_score};
 	}
 	void print_answer(){
 		// 答え表示 ---------
@@ -256,8 +256,8 @@ double annealing(int loop_max, int verbose){
 	State state;
 	state.initialize();
 	
-	auto [annealing_score, score] = state.calc_score();
-	if(DEBUG) OUT("initial score:", annealing_score, "\t", score);
+	auto [score, annealing_score] = state.calc_score();
+	if(DEBUG) OUT("initial score:", score, "\t", annealing_score);
 
 	REP(loop, loop_max){
 		double temp = start_temp + (end_temp - start_temp) * loop / loop_max;
@@ -276,10 +276,10 @@ double annealing(int loop_max, int verbose){
 				swap(state.vec[j], state.vec[k]);
 			}
 		}
-		auto [current_annealing_score, current_score] = state.calc_score();
+		auto [current_score, current_annealing_score] = state.calc_score();
 		
 		if (DEBUG && loop % verbose == 0)
-			OUT(loop, "\t:", annealing_score, "\t", score);
+			OUT(loop, "\t:", score, "\t", annealing_score);
 
 		double probability = exp((annealing_score-current_annealing_score) / temp); 
 		if (current_annealing_score < annealing_score){
@@ -308,18 +308,18 @@ double annealing(int loop_max, int verbose){
 		}
 	}
 	if(DEBUG){
-		OUT("final score:", annealing_score, "\t", score);
+		OUT("final score:", score, "\t", annealing_score);
 		state.print_answer();
 	}
 	return score;
 }
 
-double chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_width){
+double chokudai_search(int loop_max, int max_turn, int chokudai_width, int verbose){
 	if(DEBUG) OUT("chokudai_search");
 	State init;
 	init.initialize();
 	
-	auto [_, score] = init.calc_score();
+	auto [score, _] = init.calc_score();
 	if(DEBUG) OUT("initial score:", score);
 
 	// スコアが大きいほど良い
@@ -345,12 +345,12 @@ double chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_wid
 	return pq[max_turn].top().score;
 }
 
-double beam_search(int max_turn, int beam_width){
+double beam_search(int max_turn, int beam_width, int verbose){
 	if(DEBUG) OUT("beam_search");
 	State init;
 	init.initialize();
 	
-	auto [_, score] = init.calc_score();
+	auto [score, _] = init.calc_score();
 	if(DEBUG) OUT("initial score:", score);
 
 	vector<State> top_states;
@@ -369,7 +369,7 @@ double beam_search(int max_turn, int beam_width){
 				next_states.pop_back();
 		}
 		top_states = next_states;
-		if (DEBUG)
+		if (DEBUG && turn % verbose == 0)
 			OUT(turn, "\t:", top_states.front().score);
 	}
 	return top_states.front().score;
