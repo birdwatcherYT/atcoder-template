@@ -321,7 +321,7 @@ double chokudai_search(int loop_max, int verbose, int max_turn, int chokudai_wid
 	return pq[max_turn].top().score;
 }
 
-double beam_search(int loop_max, int verbose, int max_turn, int beam_width){
+double beam_search(int max_turn, int beam_width){
 	if(DEBUG) OUT("beam_search");
 	State init;
 	init.initialize();
