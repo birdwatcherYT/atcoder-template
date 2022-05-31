@@ -393,7 +393,7 @@ T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
 template<class CAP, class COST>
 COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, int s, int t, CAP init_flow) {
 	// _adj[i]: (j, capacity, cost, 逆向き辺のindex)のリスト
-	vector< vector< tuple<int, CAP, COST, int> > > _adj;
+	vector< vector< tuple<int, CAP, COST, int> > > _adj(n);
 	REP(i, n){
 		for(const auto&[j, cap, cost]: adj[i]){
 			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
