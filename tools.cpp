@@ -934,6 +934,105 @@ public:
 	}
 };
 
+// tree / linked list node
+template<class T>
+struct Node{
+	T data;
+	Node<T>* parent;
+	Node<T>* left_child;
+	Node<T>* right_child;
+	Node<T>* next_sibling;
+	Node<T>* prev_sibling;
+
+	Node(const T& data, Node<T>* parent=nullptr, 
+			Node<T>* left_child=nullptr, Node<T>* right_child=nullptr, 
+			Node<T>* next_sibling=nullptr, Node<T>* prev_sibling=nullptr){
+		this->data=data;
+		this->parent=parent;
+		this->left_child=left_child;
+		this->right_child=right_child;
+		this->next_sibling=next_sibling;
+		this->prev_sibling=prev_sibling;
+	}
+
+	Node<T>* add_child_on_left(const T &data){
+		Node<T>* node = new Node<T>(data, this, nullptr, nullptr, this->left_child, nullptr);
+		if(this->left_child!=nullptr)
+			this->left_child->prev_sibling=node;
+
+		this->left_child=node;
+		if(this->right_child==nullptr)
+			this->right_child=node;
+		return node;
+	}
+	Node<T>* add_child_on_right(const T &data){
+		Node<T>* node = new Node<T>(data, this, nullptr, nullptr, nullptr, this->right_child);
+		if(this->right_child!=nullptr)
+			this->right_child->next_sibling=node;
+
+		this->right_child=node;
+		if(this->left_child==nullptr)
+			this->left_child=node;
+		return node;
+	}
+
+	Node<T>* add_sibling_on_left(const T &data){
+		Node<T>* node = new Node<T>(data, this->parent, nullptr, nullptr, this, this->prev_sibling);
+		if(this->prev_sibling != nullptr)
+			this->prev_sibling->next_sibling=node;
+		else if(this->parent != nullptr)
+			// 一番左にいる場合
+			this->parent->left_child=node;
+		this->prev_sibling=node;
+		return node;
+	}
+	Node<T>* add_sibling_on_right(const T &data){
+		Node<T>* node = new Node<T>(data, this->parent, nullptr, nullptr, this->next_sibling, this);
+		if(this->next_sibling != nullptr)
+			this->next_sibling->prev_sibling=node;
+		else if(this->parent != nullptr)
+			// 一番右にいる場合
+			this->parent->right_child=node;
+		this->next_sibling=node;
+		return node;
+	}
+	static Node<T>* make_root(const T& data){
+		return new Node(data);
+	}
+	static void delete_subtree(Node<T>* node){
+		for(Node<T>* p=node->left_child, *next; p!=nullptr; p=next){
+			next=p->next_sibling;
+			delete_subtree(p);
+		}
+
+		if (node->prev_sibling!=nullptr)
+			node->prev_sibling->next_sibling=node->next_sibling;
+		else if(node->parent != nullptr)
+			// 一番左にいる場合
+			node->parent->left_child = node->next_sibling;
+
+		if (node->next_sibling!=nullptr)
+			node->next_sibling->prev_sibling=node->prev_sibling;
+		else if(node->parent != nullptr)
+			// 一番右にいる場合
+			node->parent->right_child = node->prev_sibling;
+		delete node;
+	}
+	void print(ostream& os=cout, bool print_sibling=true)const{
+		if (print_sibling){
+			if (this->parent != nullptr)
+				os<<this->parent->data<<": ";
+			else
+				os<<"root: ";
+			for(const Node<T>* p=this; p!=nullptr; p=p->next_sibling)
+				os<<p->data<<" ";
+			os<<endl;
+		}
+		for(const Node<T>* p=this->left_child; p!=nullptr; p=p->next_sibling)
+			p->print(os, p==this->left_child);
+	}
+};
+
 int main() {
 	// 数学
 	dump(cumsum(VI{1,2,3,4,5}, false))
@@ -1020,5 +1119,24 @@ int main() {
 	st.update(5,8,20);
 	dump(st)
 	dump(st.query(0,8))
+	// tree
+	Node<int>* root = Node<int>::make_root(0);
+	Node<int>* one = root->add_child_on_left(1);
+	Node<int>* two = root->add_child_on_left(2);
+	Node<int>* three = root->add_child_on_right(3);
+	two->add_child_on_right(4);
+	Node<int>* five = three->add_child_on_right(5);
+	five->add_sibling_on_right(6);
+	Node<int>* seven = one->add_sibling_on_right(7);
+	seven->add_child_on_left(8);
+	seven->add_child_on_right(9);
+	root->print(cout);
+	Node<int>::delete_subtree(root);
+	// as linked list
+	root = new Node<int>(0);
+	one = root->add_sibling_on_right(1);
+	two = one->add_sibling_on_right(2);
+	root->print(cout);
+	Node<int>::delete_subtree(root);
 	return 0;
 }
