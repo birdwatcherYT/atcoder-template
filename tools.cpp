@@ -859,12 +859,12 @@ public:
 	}
 	constexpr ModInt operator++(int) { 
 		ModInt tmp(*this);
-		++this;
+		++*this;
 		return tmp;
 	}
 	constexpr ModInt operator--(int) { 
 		ModInt tmp(*this);
-		--this;
+		--*this;
 		return tmp;
 	}
 	constexpr bool operator == (const ModInt& a) const {
