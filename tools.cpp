@@ -935,6 +935,8 @@ public:
 };
 
 // tree / linked list node
+// children: left_child -> .... -> right_child
+// sibling: prev_sibling <- this -> next_sibling
 template<class T>
 struct Node{
 	T data;
