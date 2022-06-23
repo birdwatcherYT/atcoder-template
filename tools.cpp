@@ -674,22 +674,72 @@ T kruskal(vector< tuple<T,int,int> > edges, int n) {
 	return min_cost;
 }
 
-// 最大値に関するセグメント木
 template <class T>
 class SegmentTree {
+public:
+	enum class Mode{
+		Maximum,
+		Minimum,
+		Summation,
+	};
 private:
-	T init_val; // 初期値
+	T default_val; // デフォルト値
 	int num_leaves; // 葉の数 (2のべき)
 	vector<T> data, lazy;
 	VB upd; // 更新があるかどうかフラグ
+	Mode mode;
 
+	T default_value(){
+		switch(mode){
+			case Mode::Maximum:
+				return numeric_limits<T>::min();
+			case Mode::Minimum:
+				return numeric_limits<T>::max();
+			case Mode::Summation:
+				return 0;
+		}
+	}
 	T op(T a, T b){
-		return max(a, b); // ここを書き換えれば最小値や合計値に対する木も作れる (ただし合計値の場合, 区間の同時更新は無理) 
+		switch(mode){
+			case Mode::Maximum:
+				return max(a, b);
+			case Mode::Minimum:
+				return min(a, b);
+			case Mode::Summation:
+				return a + b;
+		}
+	}
+	void parent_to_child(const T& parent, T& child){
+		switch(mode){
+			case Mode::Maximum:
+			case Mode::Minimum:
+				child = parent;
+			CASE Mode::Summation:
+				child += parent / 2;
+		}
+	}
+	void lazy_to_data(T& l, T& d){
+		switch(mode){
+			case Mode::Maximum:
+			case Mode::Minimum:
+				d = l;
+			CASE Mode::Summation:
+				d += l;
+		}
+	}
+	T to_lazy_value(int l, int r, T val){
+		switch(mode){
+			case Mode::Maximum:
+			case Mode::Minimum:
+				return val;
+			CASE Mode::Summation:
+				return (r-l) * val;
+		}
 	}
 	void __update(int a, int b, T val, int i, int l, int r) {
 		eval(i);
 		if (a <= l && r <= b) { // 範囲内のとき
-			lazy[i] = val;
+			lazy[i] = to_lazy_value(l, r, val);
 			upd[i] = true;
 			eval(i);
 		} else if (a < r && l < b) {
@@ -701,7 +751,7 @@ private:
 	T __query(int a, int b, int i, int l, int r) {
 		eval(i);
 		if (r <= a || b <= l) // 範囲外のとき
-			return init_val;
+			return default_val;
 		if (a <= l && r <= b)// 範囲内のとき
 			return data[i];
 		T vl = __query(a, b, i * 2 + 1, l, (l + r) / 2);
@@ -711,37 +761,38 @@ private:
 	void eval(int i) {
 		if (!upd[i]) return; // 更新が無ければスルー
 		if (i < num_leaves - 1) { // 葉でなければ子に伝播
-			lazy[i * 2 + 1] = lazy[i];
-			lazy[i * 2 + 2] = lazy[i];
+			parent_to_child(lazy[i], lazy[i * 2 + 1]);
+			parent_to_child(lazy[i], lazy[i * 2 + 2]);
 			upd[i * 2 + 1] = true;
 			upd[i * 2 + 2] = true;
 		}
 		// 自身を更新
-		data[i] = lazy[i];
-		lazy[i] = init_val;
+		lazy_to_data(lazy[i], data[i]);
+		lazy[i] = default_val;
 		upd[i] = false;
 	}
 public:
-	SegmentTree(int n, T init) {// [0,n)の範囲を持つセグメント木
+	SegmentTree(int n, Mode _mode) {// [0,n)の範囲を持つセグメント木
 		int x = 1;
 		while(n > x)
 			x *= 2;
+		mode = _mode;
 		num_leaves = x;
-		init_val = init;
-		data.resize(num_leaves*2-1, init_val);
-		lazy.resize(num_leaves*2-1, init_val);
+		default_val = default_value();
+		data.resize(num_leaves*2-1, default_val);
+		lazy.resize(num_leaves*2-1, default_val);
 		upd.resize(num_leaves*2-1, false);
 	}
-	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新 (ただし合計値の木には使えない)
+	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新 (合計値の木ではvalを加算)
 		__update(a, b, val, 0, 0, num_leaves);
 	}
-	void update(int i, T val) {// 値を更新
+	void update(int i, T val) {// 値を更新 (合計値の木ではvalを加算)
 		__update(i, i+1, val, 0, 0, num_leaves);
 	}
-	T query(int a, int b) {// [a,b)の最大値を取得
+	T query(int a, int b) {// [a,b)の最大値/最小値/合計値を取得
 		return __query(a, b, 0, 0, num_leaves);
 	}
-	T query(int i) {// iの最大値を取得
+	T query(int i) {// iの最大値/最小値/合計値を取得
 		return __query(i, i+1, 0, 0, num_leaves);
 	}
 	// 表示用
@@ -1115,7 +1166,7 @@ int main() {
 	dump(bsearch(VI{1,1,2,2,2,4}, 8, false))
 	dump(slide_min(VI{1,4,2,6,3,5}, 3))
 	// 
-	SegmentTree st(8, 0);
+	SegmentTree<int> st(8, SegmentTree<int>::Mode::Maximum);
 	st.update(1,5,10);
 	dump(st)
 	st.update(5,8,20);
