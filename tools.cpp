@@ -698,6 +698,7 @@ private:
 			case Mode::Summation:
 				return 0;
 		}
+		throw runtime_error("not support mode");
 	}
 	T op(T a, T b){
 		switch(mode){
@@ -708,6 +709,7 @@ private:
 			case Mode::Summation:
 				return a + b;
 		}
+		throw runtime_error("not support mode");
 	}
 	void parent_to_child(const T& parent, T& child){
 		switch(mode){
@@ -735,6 +737,7 @@ private:
 			CASE Mode::Summation:
 				return (r-l) * val;
 		}
+		throw runtime_error("not support mode");
 	}
 	void __update(int a, int b, T val, int i, int l, int r) {
 		eval(i);
