@@ -1,4 +1,4 @@
-// #pragma GCC optimize("O3")
+#pragma GCC optimize("O3")
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -380,6 +380,7 @@ int main() {
 	ChronoTimer timer;
 	int case_num = DEBUG ? 5 : 1;
 	double sum_score = 0.0;
+	int64_t max_time = 0;
 	REP(i, case_num){
 		timer.start();
 		if (DEBUG){
@@ -396,13 +397,16 @@ int main() {
 		double score = annealing(1000000, 100000);
 		timer.end();
 		if(DEBUG) {
+			auto time = timer.time();
 			sum_score += score;
+			max_time = max(max_time, time);
 			OUT("--------------------");
 			OUT("case_num: ", i);
 			OUT("score: ", score);
-			OUT("time: ", timer.time());
+			OUT("time: ", time);
 			OUT("mean_score: ", sum_score/(i+1));
 			OUT("sum_score: ", sum_score);
+			OUT("max_time: ", max_time);
 			OUT("--------------------");
 		}
 	}
