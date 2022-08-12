@@ -130,7 +130,7 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 
 // 乱数
 // const int SEED = random_device()();
-const int SEED = 1;
+constexpr int SEED = 1;
 mt19937 rand_engine(SEED);
 // [0,1]
 double get_rand(){
@@ -186,8 +186,8 @@ public:
 
 
 // データ
-const bool DEBUG = true;
-// const bool DEBUG = false;
+constexpr bool DEBUG = true;
+// constexpr bool DEBUG = false;
 int N;
 VI init_vec;
 void data_load(istream &is){
