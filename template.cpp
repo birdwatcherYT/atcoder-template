@@ -8,6 +8,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <bitset>
 #include <cmath>
 #include <algorithm>
 #include <string>

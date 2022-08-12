@@ -9,6 +9,7 @@
 #include <set>
 #include <map>
 #include <cmath>
+#include <bitset>
 #include <algorithm>
 #include <string>
 #include <queue>
