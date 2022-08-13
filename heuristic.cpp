@@ -173,7 +173,7 @@ public:
 	ClockTimer(){}
 	inline void start() { _start = clock(); }
 	inline void end() { _end = clock(); }
-	inline double time() const { return (double)(_end-_start) / CLOCKS_PER_SEC; }
+	inline clock_t time() const { return 1000*(_end-_start) / CLOCKS_PER_SEC; }// ミリ秒
 };
 
 // chronoは処理系によってCPU時間か実時間か変わるため注意
@@ -184,7 +184,7 @@ public:
 	ChronoTimer(){}
 	inline void start() { _start = chrono::high_resolution_clock::now(); }
 	inline void end() { _end = chrono::high_resolution_clock::now(); }
-	inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }
+	inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }// ミリ秒
 };
 
 
