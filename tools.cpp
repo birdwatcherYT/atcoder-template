@@ -357,14 +357,14 @@ private:
 public:
 	Doubling(const VI &next, LL step){
 		int n = SZ(next);
-		int logK = 1;
-		while ((1LL << logK) <= step) logK++;
+		int log_step = 1;
+		while ((1LL << log_step) <= step) log_step++;
 		// doubling[k][i]: i番目から 2^k 進んだ頂点
-		doubling = VVI(logK, VI(n));
+		doubling.assign(log_step, VI(n));
 		REP(i, n)
 			doubling[0][i] = next[i];
 		// 前処理
-		REP(k, logK - 1){
+		REP(k, log_step - 1){
 			REP(i, n)
 				doubling[k + 1][i] = doubling[k][doubling[k][i]];
 		}
@@ -378,6 +378,55 @@ public:
 			step >>= 1;
 		}
 		return now;
+	}
+};
+
+// LCA: Lowest Common Ancestor, 木の最近共通祖先
+class LCA {
+private:
+	VVI parent;  // parent[k][u]:= u の 2^k 先の親
+	VI dist;     // root からの距離
+
+	// 根からの距離と1つ先の頂点を求める
+	void _dfs(const VVI &adj, int v, int prev, int d) {
+		parent[0][v] = prev;
+		dist[v] = d;
+		for (int to : adj[v]) if (to != prev)
+			_dfs(adj, to, v, d + 1);
+	}
+public:
+	LCA(const VVI &adj, int root = 0) {
+		int n = SZ(adj);
+		int log_n = 1;
+		while ((1 << log_n) < n) log_n++;
+		parent.assign(log_n, VI(n, -1));
+		dist.assign(n, -1);
+		// parent[0]とdistを埋める
+		_dfs(adj, root, -1, 0);
+		// ダブリング
+		REP(k, log_n - 1) {
+			REP(v, n)
+				parent[k + 1][v] = (parent[k][v] < 0)? -1 : parent[k][parent[k][v]];
+		}
+	}
+	int query(int u, int v) {// uとvの最近共通祖先
+		if (dist[u] < dist[v])// uの方が深い
+			swap(u, v);
+		int log_n = SZ(parent);
+		// 深さを同じにする
+		REP (k, log_n) {
+			if (((dist[u] - dist[v]) >> k) & 1) 
+				u = parent[k][u];
+		}
+		if (u == v) return u;
+		// k個先を確認して共通祖先でないなら, k個先に移動
+		RREP (k, log_n) {
+			if (parent[k][u] != parent[k][v]) {
+				u = parent[k][u];
+				v = parent[k][v];
+			}
+		}
+		return parent[0][u];
 	}
 };
 
