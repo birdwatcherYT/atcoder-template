@@ -428,6 +428,12 @@ public:
 		}
 		return parent[0][u];
 	}
+	int get_dist(int u, int v) {// 2頂点間の距離
+		return dist[u] + dist[v] - 2 * dist[query(u, v)];
+	}
+	bool is_on_path(int u, int v, int a) {// aがu-vのパス上にあるか判定
+		return get_dist(u, a) + get_dist(a, v) == get_dist(u, v);
+	}
 };
 
 // 増加可能経路を探し, 増加分のフローを返す
