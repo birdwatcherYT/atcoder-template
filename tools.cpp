@@ -350,6 +350,37 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 	return cost_min;
 }
 
+// ダブリング: step個先の要素を求める
+class Doubling{
+private:
+	VVI doubling;
+public:
+	Doubling(const VI &next, LL step){
+		int n = SZ(next);
+		int logK = 1;
+		while ((1LL << logK) <= step) logK++;
+		// doubling[k][i]: i番目から 2^k 進んだ頂点
+		doubling = VVI(logK, VI(n));
+		REP(i, n)
+			doubling[0][i] = next[i];
+		// 前処理
+		REP(k, logK - 1){
+			REP(i, n)
+				doubling[k + 1][i] = doubling[k][doubling[k][i]];
+		}
+	}
+	// 頂点startからstep回移動した頂点
+	int reach(int start, LL step){
+		int now = start;
+		for (int k = 0; step > 0LL; k++) {
+			if (step & 1LL)
+				now = doubling[k][now];
+			step >>= 1;
+		}
+		return now;
+	}
+};
+
 // 増加可能経路を探し, 増加分のフローを返す
 // adj[i]: (j, capacity, 逆向き辺のindex)のリスト
 template<class T>
