@@ -263,7 +263,9 @@ double annealing(int loop_max, int verbose){
 	if(DEBUG) OUT("initial score:", score, "\t", annealing_score);
 
 	REP(loop, loop_max){
-		double temp = start_temp + (end_temp - start_temp) * loop / loop_max;
+		// 温度
+		double temp = start_temp + (end_temp - start_temp) * loop / loop_max; // 線形
+		// double temp = start_temp * pow(end_temp/start_temp, (double) loop / loop_max); // 指数
 		// State backup = state;
 		// 操作
 		int op = get_rand(2);
