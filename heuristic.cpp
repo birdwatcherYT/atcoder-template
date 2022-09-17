@@ -232,7 +232,7 @@ struct State {
 		// -----------------
 		return {score, annealing_score};
 	}
-	void print_answer(){
+	void print_answer() const {
 		// 答え表示 ---------
 		OUT(vec);
 		// -----------------
