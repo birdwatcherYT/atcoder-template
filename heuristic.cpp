@@ -22,13 +22,15 @@
 #include <random>
 #include <chrono>
 #include <thread>
+#include <optional> // optional<int> f = nullopt; if(f) f.value();
 #define _PI	 3.14159265358979323846
 #define _E	  2.7182818284590452354
 #define INF	 (INT_MAX / 2)
 #define LINF	(LLONG_MAX / 2)
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
-#define REP(i, n)  FOR(i, 0, n)
-#define RREP(i, n)  for(int i = (n) - 1; i >= 0; --i)
+#define RFOR(i, a, b) for(int i = (b) - 1; i >= (a); --i)
+#define REP(i, n) FOR(i, 0, n)
+#define RREP(i, n) RFOR(i, 0, n)
 #define EACH(e, v) for(auto &e : v)
 #define ITR(it, v) for(auto it = (v).begin(); it != (v).end(); ++it)
 #define RITR(it, v) for(auto it = (v).rbegin(); it != (v).rend(); ++it)
