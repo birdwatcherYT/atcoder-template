@@ -119,6 +119,7 @@ using LL = long long; using ULL = unsigned long long;
 using VI = vector<int>; using VVI = vector<VI>; using VVVI = vector<VVI>;
 using VL = vector<LL>; using VVL = vector<VL>; using VVVL = vector<VVL>;
 using VB = vector<bool>; using VVB = vector<VB>; using VVVB = vector<VVB>;
+using VD = vector<double>; using VVD = vector<VD>; using VVVD = vector<VVD>;
 using VC = vector<char>; using VS = vector<string>;
 using PII = pair<int,int>; using PLL = pair<LL,LL>;
 using MII = map<int,int>; using MLL = map<LL,LL>;
