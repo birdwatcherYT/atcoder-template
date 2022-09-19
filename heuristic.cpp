@@ -152,6 +152,28 @@ int get_rand(int l, int u){
 	uniform_int_distribution<int> rand_lu(l, u-1);
 	return rand_lu(rand_engine);
 }
+// 累積和
+template<class T>
+vector<T> cumsum(const vector<T> &vec, bool zero_start){
+	int n = SZ(vec) + zero_start;
+	vector<T> cumsum(n);
+	cumsum[0] = zero_start ? 0 : vec[0];
+	FOR(i, 1, n)
+		cumsum[i] = cumsum[i-1] + vec[i - zero_start];
+	return cumsum;
+}
+template<class T>
+int __get_rand_index(const vector<T> &weight_cumsum){
+	double p = get_rand() * weight_cumsum.back();
+	return min((int)INSPOS(weight_cumsum, p), SZ(weight_cumsum)-1);
+}
+// 重みの割合でindex
+template<class T>
+int get_rand_index(const vector<T> &weight){
+	auto weight_cumsum = cumsum(weight, false);
+	return __get_rand_index(weight_cumsum);
+}
+
 // 画面クリア
 void clear_screen(){
 	cout << "\x1b[0;0H";
