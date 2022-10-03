@@ -130,6 +130,8 @@ template<class T> using MINPQ = priority_queue< T, vector<T>, greater<T> >;
 // str -> int: stoi(s)
 // vec -> set: set<int> s(ALL(v));
 // 1が立っている数: __builtin_popcount(i), __builtin_popcountll(i)
+// 上位ビットの連続した0の数: __builtin_clz(i), __builtin_clzll(i) // i=0未定義
+// 下位ビットの連続した0の数: __builtin_ctz(i), __builtin_ctzll(i) // i=0未定義
 
 template <class Head> void IN(Head&& head) {cin >> head;}
 template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}

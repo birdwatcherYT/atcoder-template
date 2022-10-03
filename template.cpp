@@ -20,6 +20,7 @@
 #include <numeric>
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15); cout << setfill('0') << std::right << setw(3);
+#include <optional> // optional<int> f = nullopt; if(f) f.value();
 #define _PI     3.14159265358979323846
 #define _E      2.7182818284590452354
 #define INF     (INT_MAX / 2)
@@ -128,6 +129,8 @@ template<class T> using MINPQ = priority_queue< T, vector<T>, greater<T> >;
 // str -> int: stoi(s)
 // vec -> set: set<int> s(ALL(v));
 // 1が立っている数: __builtin_popcount(i), __builtin_popcountll(i)
+// 上位ビットの連続した0の数: __builtin_clz(i), __builtin_clzll(i) // i=0未定義
+// 下位ビットの連続した0の数: __builtin_ctz(i), __builtin_ctzll(i) // i=0未定義
 
 istringstream debug_iss(R"(
 デバッグ時はここに入力を貼り付けて下記マクロのコメントアウトを外す
