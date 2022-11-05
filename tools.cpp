@@ -1078,6 +1078,24 @@ public:
 		os << a.x;
 		return os;
 	}
+	constexpr friend bool operator == (int i, const ModInt& a) {
+		return ModInt(i) == a;
+	}
+	constexpr friend bool operator != (int i, const ModInt& a) {
+		return ModInt(i) != a;
+	}
+	constexpr friend ModInt operator+(int i, const ModInt& a) {
+		return ModInt(i)+=a;
+	}
+	constexpr friend ModInt operator-(int i, const ModInt& a) {
+		return ModInt(i)-=a;
+	}
+	constexpr friend ModInt operator*(int i, const ModInt& a) {
+		return ModInt(i)*=a;
+	}
+	constexpr friend ModInt operator/(int i, const ModInt& a) {
+		return ModInt(i)/=a;
+	}
 };
 
 // tree / linked list node
@@ -1196,6 +1214,8 @@ int main() {
 	dump(eratosthenes(100))
 	dump(to_baseB(180, 16))
 	dump(to_base10<int>("B4", 16))
+	dump(ModInt<998244353>(5)/2)
+	dump(5/ModInt<998244353>(2))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
