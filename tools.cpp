@@ -489,8 +489,8 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
 	REP(i, n){
 		for(const auto&[j, cap, cost]: adj[i]){
 			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
-			_adj[i].push_back({j, cap, cost, size_j});
-			_adj[j].push_back({i, 0, -cost, size_i});// キャパゼロの逆向き辺
+			_adj[i].emplace_back(j, cap, cost, size_j);
+			_adj[j].emplace_back(i, 0, -cost, size_i);// キャパゼロの逆向き辺
 		}
 	}
 
@@ -507,7 +507,7 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
 		while (true) {
 			bool update = false;
 			REP(v, n){
-				if (dist[v] != _INF) continue;
+				if (dist[v] == _INF) continue;
 				REP(i, SZ(_adj[v])) {
 					const auto &[to, cap, cost, rev] = _adj[v][i];
 					if (cap > 0 && dist[to] > dist[v] + cost) {
