@@ -301,6 +301,17 @@ int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
 	return left;
 }
 
+// 3分探索で最小値を与えるxを求める
+double tsearch(function<double(double)> fn, double low, double high, double eps){
+	while (abs(high-low)>eps) {
+		double x1 = (low * 2 + high) / 3;
+		double x2 = (low + high * 2) / 3;
+		if (fn(x1) > fn(x2)) low = x1;
+		else high = x2;
+	}
+	return low;
+}
+
 // ダイクストラ：始点sからその他頂点への最短距離を返す
 template<class T>
 vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
@@ -1216,6 +1227,8 @@ int main() {
 	dump(to_base10<int>("B4", 16))
 	dump(ModInt<998244353>(5)/2)
 	dump(5/ModInt<998244353>(2))
+	auto fn=[](double x){return (x-3)*(x-3);};
+	dump(tsearch(fn,0,10,1e-6));
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
