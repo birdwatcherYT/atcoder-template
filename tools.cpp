@@ -142,10 +142,10 @@ vector<string> split_str(const string &str, char delim, bool ignore_empty){
 	vector<string> result;
 	while (std::getline(ss, buf, delim)) {
 		if (!ignore_empty || !buf.empty())
-			result.push_back(buf);
+			result.emplace_back(buf);
 	}
 	if (!ignore_empty && !str.empty() && str.back()==delim)
-		result.push_back("");
+		result.emplace_back("");
 	return result;
 }
 
@@ -238,11 +238,11 @@ vector<T> pfact(T n){
 	for (T i=2; i*i<=n; ++i){
 		while(n%i==0){
 			n/=i;
-			ans.push_back(i);
+			ans.emplace_back(i);
 		}
 	}
 	if (n!=1)
-		ans.push_back(n);
+		ans.emplace_back(n);
 	return ans;
 }
 
@@ -252,8 +252,8 @@ vector<T> divisor(T n){
 	vector<T> ans;
 	for (T i=1; i*i<=n; ++i){
 		if(n%i!=0) continue;
-		ans.push_back(i);
-		if (i!=(n/i)) ans.push_back(n/i);
+		ans.emplace_back(i);
+		if (i!=(n/i)) ans.emplace_back(n/i);
 	}
 	SORT(ans);
 	return ans;
@@ -270,7 +270,7 @@ vector<T> eratosthenes(T n){
 			is_prime[j] = false;
 	}
 	for (T i=2; i<=n; ++i)
-		if (is_prime[i]) ans.push_back(i);
+		if (is_prime[i]) ans.emplace_back(i);
 	return ans;
 }
 
@@ -490,8 +490,8 @@ T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
 	REP(i, n){
 		for(const auto&[j, cap]: adj[i]){
 			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
-			_adj[i].push_back({j, cap, size_j});
-			_adj[j].push_back({i, 0, size_i});// キャパゼロの逆向き辺
+			_adj[i].emplace_back(j, cap, size_j);
+			_adj[j].emplace_back(i, 0, size_i);// キャパゼロの逆向き辺
 		}
 	}
 
@@ -576,7 +576,7 @@ VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, �
 		int v = que.front();
 		que.pop();
 		if (!seen[v])
-			visit.push_back(v);
+			visit.emplace_back(v);
 		seen[v] = true;
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to])
@@ -598,7 +598,7 @@ VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, 
 		int v = st.top();
 		st.pop();
 		if (!seen[v])
-			visit.push_back(v);
+			visit.emplace_back(v);
 		seen[v] = true;
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to])
@@ -612,7 +612,7 @@ VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, 
 template<class T>
 void _dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s, VB &seen, VI &visit){
 	if (!seen[s])
-		visit.push_back(s);
+		visit.emplace_back(s);
 	seen[s] = true;
 	for (auto [to, cost] : adj[s]){
 		if (!seen[to])
@@ -633,7 +633,7 @@ void _sccd(const VVI &adj, int s, VB &seen, VI &visit){
 	EACH(to, adj[s])
 		if (!seen[to])
 			_sccd(adj, to, seen, visit);
-	visit.push_back(s);
+	visit.emplace_back(s);
 }
 // Strongly Connected Component Decomposition (強連結成分分解)
 VVI sccd(const VVI &adj, int n){
@@ -647,7 +647,7 @@ VVI sccd(const VVI &adj, int n){
 	// 2. 反転させたグラフをDFSの逆順でたどる
 	VVI adj_rev(n);
 	REP(i, n)EACH(j, adj[i])
-		adj_rev[j].push_back(i);
+		adj_rev[j].emplace_back(i);
 	seen = VB(n, false);
 	VVI connected;
 	RITR(it, visit){
@@ -655,7 +655,7 @@ VVI sccd(const VVI &adj, int n){
 			continue;
 		VI component;
 		_sccd(adj_rev, *it, seen, component);
-		connected.push_back(component);
+		connected.emplace_back(component);
 	}
 	return connected;
 }
@@ -677,7 +677,7 @@ VI topological_sort(const VVI &adj, int n){
 		// 入次数がゼロで番号が若い順に訪問する
 		int i = heap.top();
 		heap.pop();
-		ans.push_back(i);
+		ans.emplace_back(i);
 		// iをグラフから削除
 		EACH(j, adj[i]) {
 			indeg[j]--;
@@ -743,7 +743,7 @@ public:
 		VI mem;
 		REP(i, n)
 			if (root(i) == r)
-				mem.push_back(i);
+				mem.emplace_back(i);
 		return mem;
 	}
 	// 根たち
@@ -751,7 +751,7 @@ public:
 		VI mem;
 		REP(i, n)
 			if (parent[i] < 0)
-				mem.push_back(i);
+				mem.emplace_back(i);
 		return mem;
 	}
 	// 木の数
@@ -762,7 +762,7 @@ public:
 	map<int, VI> all_group_members() {
 		map<int, VI> group_members;
 		REP(member, n)
-			group_members[root(member)].push_back(member);
+			group_members[root(member)].emplace_back(member);
 		return group_members;
 	}
 	// 表示用
@@ -983,7 +983,7 @@ size_t LIS(const vector<T> &ary){
 		if (it != dp.end())
 			*it=a;
 		else
-			dp.push_back(a);
+			dp.emplace_back(a);
 	}
 	return dp.size();
 }
@@ -997,7 +997,7 @@ vector<T> slide_min(const vector<T> &ary, int k){
 		// 現在の値以上を持つ場合削除
 		while(!q.empty() && ary[q.back()] >= ary[i])
 			q.pop_back();
-		q.push_back(i);
+		q.emplace_back(i);
 		if (i-k+1 >= 0) {
 			ans[i-k+1] = ary[q.front()];
 			// ウィンドウから外れるため削除
@@ -1257,7 +1257,7 @@ int main() {
 	REP(_, m1){
 		int s, t, cost;
 		iss1 >> s >> t >> cost;
-		adj1[s].push_back({t, cost});
+		adj1[s].emplace_back(t, cost);
 	}
 	dump(adj1)
 	dump(dijkstra(adj1, n1, start))
@@ -1286,7 +1286,7 @@ int main() {
 	REP(_, m2){
 		int s, t;
 		iss2 >> s >> t;
-		adj2[s].push_back(t);
+		adj2[s].emplace_back(t);
 	}
 	dump(adj2)
 	dump(sccd(adj2, n2))
