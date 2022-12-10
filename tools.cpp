@@ -136,6 +136,19 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 
 // --------------------ここから--------------------
 
+vector<string> split_str(const string &str, char delim, bool ignore_empty){
+	stringstream ss{str};
+	string buf;
+	vector<string> result;
+	while (std::getline(ss, buf, delim)) {
+		if (!ignore_empty || !buf.empty())
+			result.push_back(buf);
+	}
+	if (!ignore_empty && !str.empty() && str.back()==delim)
+		result.push_back("");
+	return result;
+}
+
 template<class T>
 vector<T> cumsum(const vector<T> &vec, bool zero_start){
 	int n = SZ(vec) + zero_start;
@@ -1319,5 +1332,10 @@ int main() {
 	two = one->add_sibling_on_right(2);
 	root->print(cout);
 	Node<int>::delete_subtree(root);
+
+	dump(split_str("a|bc||d", '|', true))
+	dump(split_str("a|bc||d", '|', false))
+	dump(split_str("|a|bc||d||", '|', true))
+	dump(split_str("|a|bc||d||", '|', false))
 	return 0;
 }
