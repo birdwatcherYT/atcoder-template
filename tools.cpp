@@ -80,6 +80,10 @@ template<class T> ostream& operator<<(ostream& os, const set<T>& s) {
 	os << "{ "; for ( const T& item : s ) os << item << ", ";
 	os << "}"; return os;
 }
+template<class T> ostream& operator<<(ostream& os, const multiset<T>& s) {
+	os << "{ "; for ( const T& item : s ) os << item << ", ";
+	os << "}"; return os;
+}
 template<class T1, class T2> ostream& operator<<(ostream& os, const map<T1, T2>& m) {
 	os << "{ "; for ( const auto &[key, value] : m ) os << key << ":"<< value << ", ";
 	os << "}"; return os;
