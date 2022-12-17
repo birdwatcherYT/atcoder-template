@@ -614,20 +614,20 @@ VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, 
 
 // 深さ優先（再帰）で訪問したノードの順番を返す
 template<class T>
-void _dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s, VB &seen, VI &visit){
+void _dfs_recursive(const vector< vector< pair<int, T> > > &adj, int s, VB &seen, VI &visit){
 	if (!seen[s])
 		visit.emplace_back(s);
 	seen[s] = true;
 	for (auto [to, cost] : adj[s]){
 		if (!seen[to])
-			_dfs_recursive(adj, n, to, seen, visit);
+			_dfs_recursive(adj, to, seen, visit);
 	}
 }
 template<class T>
 VI dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s){
 	VB seen(n, false);
 	VI visit;
-	_dfs_recursive(adj, n, s, seen, visit);
+	_dfs_recursive(adj, s, seen, visit);
 	return visit;
 }
 
