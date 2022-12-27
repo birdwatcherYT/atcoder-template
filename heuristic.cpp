@@ -389,14 +389,13 @@ double beam_search(int max_turn, int beam_width, int verbose){
 	auto [score, _] = init.calc_score();
 	if(DEBUG) OUT("initial score:", score);
 
-	vector<State> top_states;
-	top_states.push_back(init);
+	vector<State> top_states{init};
 	REP(turn, max_turn){ // 各ターン
 		vector<State> next_states;
 		for(const State &state : top_states) {
 			for(State& next : state.next_states()){
 				next.calc_score();
-				next_states.push_back(next);
+				next_states.emplace_back(next);
 			}
 			// スコアが大きいほど良い
 			RSORT(next_states);
