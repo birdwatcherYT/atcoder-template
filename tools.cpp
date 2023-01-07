@@ -235,6 +235,19 @@ T combi_mod(T n, T r, T mod){
 	return (ans * inv_div) % mod;
 }
 
+// ceil(sqrt(n))を返す
+template<class T>
+T sqrt_int(T n){
+	T left=0, right=n;
+	while(left <= right){
+		T mid = (left+right)/2;
+		T val = mid*mid;
+		if (val < n) left=mid+1;
+		else right=mid-1;
+	}
+	return left;
+}
+
 // 素因数分解
 template<class T>
 vector<T> pfact(T n){
@@ -1245,7 +1258,10 @@ int main() {
 	dump(ModInt<998244353>(5)/2)
 	dump(5/ModInt<998244353>(2))
 	auto fn=[](double x){return (x-3)*(x-3);};
-	dump(tsearch(fn,0,10,1e-6));
+	dump(tsearch(fn,0,10,1e-6))
+	dump(sqrt_int(144))
+	dump(sqrt_int(143))
+	dump(sqrt_int(145))
 	// グラフ
 	istringstream iss1(
 		"4 5 0\n" // 頂点数 辺の数 開始ノード
