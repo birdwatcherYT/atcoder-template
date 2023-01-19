@@ -180,6 +180,14 @@ int get_rand_index(const vector<T> &weight){
 	auto weight_cumsum = cumsum(weight, false);
 	return __get_rand_index(weight_cumsum);
 }
+// [0,n)から重複なしでr個選ぶ
+VI rand_choice(int n, int r){
+	VI candidates(n);
+	ARANGE(candidates);
+	VI result;
+	std::sample(candidates.begin(), candidates.end(), back_inserter(result), r, rand_engine);
+	return result;
+}
 
 // 画面クリア
 void clear_screen(){

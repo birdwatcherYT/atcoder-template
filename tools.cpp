@@ -21,6 +21,7 @@
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15); cout << setfill('0') << std::right << setw(3);
 #include <optional> // optional<int> f = nullopt; if(f) f.value();
+#include <random>
 #define _PI     3.14159265358979323846
 #define _E      2.7182818284590452354
 #define INF     (INT_MAX / 2)
@@ -1239,6 +1240,65 @@ struct Node{
 			p->print(os, p==this->left_child);
 	}
 };
+
+tuple<VI, VVD, VVI> kmeans(const VVD &points, int m, mt19937& rand_engine){
+	assert(m>0);
+	// サンプル数
+	int n=SZ(points);
+	assert(n>=m);
+	// 次元数
+	int dim = SZ(points.front());
+	// セントロイド
+	VVD centroid(m);
+	{
+		// 初期セントロイドを選ぶ
+		VI candidates(n); ARANGE(candidates);
+		VI selected; std::sample(candidates.begin(), candidates.end(), back_inserter(selected), m, rand_engine);
+		REP(i, m)
+			centroid[i]=points[selected[i]];
+	}
+
+	VI assign(n);
+	VVI clusters(m);
+
+	while(true){
+		auto prev_assign=assign;
+		REP(i, m)
+			clusters[i].clear();
+		// グループ分け
+		REP(i, n){
+			double min_dist=__DBL_MAX__;
+			REP(j, m){
+				// セントロイドとの距離
+				double dist = 0;
+				REP(k, dim){
+					double diff=centroid[j][k] - points[i][k];
+					dist += diff*diff;
+				}
+				dist = sqrt(dist);
+				if(min_dist>dist){
+					assign[i]=j;
+					min_dist=dist;
+				}
+			}
+			clusters[assign[i]].emplace_back(i);
+		}
+		// セントロイド更新
+		REP(i, m){
+			// 平均点を求める
+			fill(ALL(centroid[i]), 0);
+			for(int j: clusters[i]){
+				REP(k, dim)
+					centroid[i][k] += points[j][k];
+			}
+			REP(k, dim)
+				centroid[i][k] /= SZ(clusters[i]);
+		}
+		if(prev_assign==assign)
+			break;
+	}
+	return {assign, centroid, clusters};
+}
 
 int main() {
 	// 数学
