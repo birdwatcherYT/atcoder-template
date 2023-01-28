@@ -794,12 +794,13 @@ public:
 // 最小全域木
 // edges: {cost, v1, v2}
 template<class T>
-T kruskal(vector< tuple<T,int,int> > edges, int n) {
+T kruskal(const vector< tuple<T,int,int> > &edges, int n) {
 	// コストが小さい順にソート
-	sort(edges.begin(), edges.end());
+	auto index = argsort(edges);
 	UnionFind uf(n);
 	T min_cost = 0;
-	for(auto [cost, v1, v2] : edges) {
+	for(auto i: index){
+		const auto &[cost, v1, v2] = edges[i];
 		if (!uf.same(v1, v2)) {
 			// 辺を追加しても閉路ができないなら、その辺を採用する
 			min_cost += cost;
