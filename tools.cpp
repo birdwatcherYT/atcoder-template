@@ -349,7 +349,7 @@ template<class T>
 vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
 	vector<T> dist(n, numeric_limits<T>::max()/2);
 	priority_queue< pair<T, int>, vector< pair<T, int> >, greater< pair<T, int> > > pq;
-	pq.push({0, s}); // (コスト, ノード)
+	pq.emplace(0, s); // (コスト, ノード)
 	dist[s] = 0;
 	VB seen(n, false);
 	while (!pq.empty()){
@@ -359,7 +359,7 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to] && dist[v] + cost < dist[to]){
 				dist[to] = dist[v] + cost;
-				pq.push({dist[to], to});
+				pq.emplace(dist[to], to);
 			}
 		}
 	}
@@ -587,7 +587,7 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
 template<class T>
 VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
 	queue<int> que;
-	que.push(s);
+	que.emplace(s);
 	VB seen(n, false);
 
 	VI visit;
@@ -599,7 +599,7 @@ VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, �
 		seen[v] = true;
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to])
-				que.push(to);
+				que.emplace(to);
 		}
 	}
 	return visit;
@@ -609,7 +609,7 @@ VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, �
 template<class T>
 VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, ノード数, 始点)
 	stack<int> st;
-	st.push(s);
+	st.emplace(s);
 	VB seen(n, false);
 
 	VI visit;
@@ -621,7 +621,7 @@ VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, 
 		seen[v] = true;
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to])
-				st.push(to);
+				st.emplace(to);
 		}
 	}
 	return visit;
@@ -689,7 +689,7 @@ VI topological_sort(const VVI &adj, int n){
 	priority_queue< int, VI, greater<int> > heap;
 	REP(i, n){
 		if (indeg[i] == 0) 
-			heap.push(i);
+			heap.emplace(i);
 	}
 	VI ans;
 	while (!heap.empty()) {
@@ -701,7 +701,7 @@ VI topological_sort(const VVI &adj, int n){
 		EACH(j, adj[i]) {
 			indeg[j]--;
 			if (indeg[j] == 0)
-				heap.push(j);
+				heap.emplace(j);
 		}
 	}
 	return ans;
