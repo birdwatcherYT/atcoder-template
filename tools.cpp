@@ -355,6 +355,7 @@ vector<T> dijkstra(const vector< vector< pair<int, T> > > &adj, int n, int s){ /
 	while (!pq.empty()){
 		int v = pq.top().second;
 		pq.pop();
+		if(seen[v]) continue;
 		seen[v] = true;
 		for (auto [to, cost] : adj[v]){ // ノード v に隣接しているノードに対して
 			if (!seen[to] && dist[v] + cost < dist[to]){
