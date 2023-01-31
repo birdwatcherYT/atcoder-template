@@ -1143,6 +1143,29 @@ public:
 	}
 };
 
+// 三角行列
+template<class T>
+struct TriangularMatrix{
+	vector<vector<T>> data;
+	TriangularMatrix(){}
+	TriangularMatrix(int n, bool diag, const T &val=0){
+		init(n, diag, val);
+	}
+	void init(int n, bool diag, const T &val=0){
+		data.clear();
+		data.reserve(n);
+		REP(i, n)
+			data.emplace_back(vector<T>(i+diag, val));
+	}
+	T &at(int i, int j){
+		return (i<j)? data[j][i] : data[i][j];
+	}
+	const T &at(int i, int j) const {
+		return (i<j)? data[j][i] : data[i][j];
+	}
+};
+
+
 // tree / linked list node
 // children: left_child -> .... -> right_child
 // sibling: prev_sibling <- this -> next_sibling
