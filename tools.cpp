@@ -1102,7 +1102,7 @@ public:
 		return ans;
 	}
 	constexpr ModInt inv() const {
-		LL x0 = 1LL, x1 = 0LL, x2, y0 = 0LL, y1 = 1LL, y2, r0 = x, r1 = MOD, r2, q2;
+		LL x0 = 1LL, x1 = 0LL, x2 = 0LL, y0 = 0LL, y1 = 1LL, y2 = 0LL, r0 = x, r1 = MOD, r2 = 0LL , q2 = 0LL;
 		while (r1 != 0LL) {
 			q2 = r0 / r1;
 			r2 = r0 % r1;
@@ -1146,22 +1146,27 @@ public:
 // 三角行列
 template<class T>
 struct TriangularMatrix{
-	vector<vector<T>> data;
+	vector<T> data;
+	bool diag;
 	TriangularMatrix(){}
-	TriangularMatrix(int n, bool diag, const T &val=0){
+	TriangularMatrix(int n, bool diag, const T &val=0) {
 		init(n, diag, val);
 	}
+	static int sum_1_to_k(int k){
+		return k*(k+1)/2;
+	}
 	void init(int n, bool diag, const T &val=0){
-		data.clear();
-		data.reserve(n);
-		REP(i, n)
-			data.emplace_back(vector<T>(i+diag, val));
+		int size = sum_1_to_k(n-diag);
+		data.assign(size, val);
+		this->diag = diag;
 	}
 	T &at(int i, int j){
-		return (i<j)? data[j][i] : data[i][j];
+		if(i<j) swap(i,j);
+		return data[sum_1_to_k(i-diag)+j];
 	}
 	const T &at(int i, int j) const {
-		return (i<j)? data[j][i] : data[i][j];
+		if(i<j) swap(i,j);
+		return data[sum_1_to_k(i-diag)+j];
 	}
 };
 
