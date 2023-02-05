@@ -1156,17 +1156,17 @@ struct TriangularMatrix{
 		return k*(k+1)/2;
 	}
 	void init(int n, bool diag, const T &val=0){
-		int size = sum_1_to_k(n-diag);
+		int size = sum_1_to_k(n-!diag);
 		data.assign(size, val);
 		this->diag = diag;
 	}
 	T &at(int i, int j){
 		if(i<j) swap(i,j);
-		return data[sum_1_to_k(i-diag)+j];
+		return data[sum_1_to_k(i-!diag)+j];
 	}
 	const T &at(int i, int j) const {
 		if(i<j) swap(i,j);
-		return data[sum_1_to_k(i-diag)+j];
+		return data[sum_1_to_k(i-!diag)+j];
 	}
 };
 
