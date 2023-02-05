@@ -1146,27 +1146,22 @@ public:
 // 三角行列
 template<class T>
 struct TriangularMatrix{
-	vector<T> data;
-	bool diag;
+	vector<vector<T>> data;
 	TriangularMatrix(){}
-	TriangularMatrix(int n, bool diag, const T &val=0) {
+	TriangularMatrix(int n, bool diag, const T &val=0){
 		init(n, diag, val);
 	}
-	static int sum_1_to_k(int k){
-		return k*(k+1)/2;
-	}
 	void init(int n, bool diag, const T &val=0){
-		int size = sum_1_to_k(n-!diag);
-		data.assign(size, val);
-		this->diag = diag;
+		data.clear();
+		data.reserve(n);
+		REP(i, n)
+			data.emplace_back(vector<T>(i+diag, val));
 	}
 	T &at(int i, int j){
-		if(i<j) swap(i,j);
-		return data[sum_1_to_k(i-!diag)+j];
+		return (i<j)? data[j][i] : data[i][j];
 	}
 	const T &at(int i, int j) const {
-		if(i<j) swap(i,j);
-		return data[sum_1_to_k(i-!diag)+j];
+		return (i<j)? data[j][i] : data[i][j];
 	}
 };
 
