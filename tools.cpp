@@ -397,6 +397,70 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 	return cost_min;
 }
 
+// A*アルゴリズム
+// cost_map[i][j]: 座標(i,j)に訪問するとコストが発生する
+template<class T>
+pair<T, vector<PII>> a_star(const vector<vector<T>> &cost_map, int start_row, int start_col, int end_row, int end_col){
+	const vector<PII> directions{{0,1},{0,-1},{1,0},{-1,0}};
+	const int row_max = SZ(cost_map);
+	const int col_max = SZ(cost_map.front());
+
+	// ヒューリスティック関数 h
+	auto heuristic = [&](int i, int j){return abs(i-end_row)+abs(j-end_col);};
+	// f=g+h
+	vector<vector<T>> f_value(row_max, VI(col_max, INF));
+
+	auto to_id = [&](int i, int j){return i*col_max+j;};
+	auto to_point = [&](int id){return PII{id/col_max, id%col_max};};
+	// 親のID
+	VVI parent(row_max, VI(col_max, -1));
+
+	// NOTE: コスト負は壁を表すことにする
+	REP(i, row_max)REP(j, col_max) {
+		if (cost_map[i][j] < 0) 
+			f_value[i][j]=-1;
+	}
+
+	// f, i, j
+	MINPQ<tuple<T,int,int>> pq;
+	pq.emplace(heuristic(start_row, start_col), start_row, start_col);
+	f_value[start_row][start_col] = 0 + heuristic(start_row, start_col);
+
+	while (!pq.empty()) {
+		auto [now_f, now_row, now_col]=pq.top();
+		pq.pop();
+		// ゴール
+		if (now_row==end_row && now_col == end_col)
+			break;
+		if(f_value[now_row][now_col] < now_f)
+			continue;
+		// 現在の真のコスト
+		T now_g = now_f - heuristic(now_row, now_col);
+		// 次のノードへ
+		for(auto [di,dj]: directions){
+			int next_row=now_row+di, next_col=now_col+dj;
+			if (0>next_row || next_row>=row_max || 0>next_col || next_col>=col_max)
+				continue;
+			T nextCost = now_g + cost_map[next_row][next_col] + heuristic(next_row, next_col);
+			if(nextCost < f_value[next_row][next_col]){
+				f_value[next_row][next_col]=nextCost;
+				parent[next_row][next_col]=to_id(now_row, now_col);
+				pq.emplace(nextCost, next_row, next_col);
+			}
+		}
+	}
+
+	vector<PII> path;
+	int id=to_id(end_row, end_col);
+	while(id >= 0){
+		auto [r,c] = to_point(id);
+		path.emplace_back(r,c);
+		id=parent[r][c];
+	}
+	REVERSE(path);
+	return {f_value[end_row][end_col] - heuristic(end_row, end_col), path};
+}
+
 // ダブリング: step個先の要素を求める
 class Doubling{
 private:
