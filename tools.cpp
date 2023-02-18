@@ -400,7 +400,7 @@ vector< vector<T> > floyd_warshall(const vector< vector<T> > &cost, int n) {// (
 // A*アルゴリズム
 // cost_map[i][j]: 座標(i,j)に訪問するとコストが発生する
 template<class T>
-pair<T, vector<PII>> a_star(const vector<vector<T>> &cost_map, int start_row, int start_col, int end_row, int end_col){
+pair<T, vector<PII>> a_star(const vector<vector<T>> &cost_map, int start_row, int start_col, int end_row, int end_col, bool start_cost){
 	const vector<PII> directions{{0,1},{0,-1},{1,0},{-1,0}};
 	const int row_max = SZ(cost_map);
 	const int col_max = SZ(cost_map.front());
@@ -423,8 +423,8 @@ pair<T, vector<PII>> a_star(const vector<vector<T>> &cost_map, int start_row, in
 
 	// f, i, j
 	MINPQ<tuple<T,int,int>> pq;
-	pq.emplace(heuristic(start_row, start_col), start_row, start_col);
-	f_value[start_row][start_col] = 0 + heuristic(start_row, start_col);
+	f_value[start_row][start_col] = (start_cost ?  cost_map[start_row][start_col]: 0) + heuristic(start_row, start_col);
+	pq.emplace(f_value[start_row][start_col], start_row, start_col);
 
 	while (!pq.empty()) {
 		auto [now_f, now_row, now_col]=pq.top();
