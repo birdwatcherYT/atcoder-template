@@ -1058,6 +1058,78 @@ vector< vector<T> > rotate90(const vector< vector<T> >& mat){
 	return ans;
 }
 
+inline constexpr int DeBruijnBitPosition32[] = {
+	0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
+	31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+};
+// 最下位ビットの1の位置
+int lsb_pos32(unsigned int x) {
+	if(x==0U) return -1;
+	// 最下位ビットだけを残す
+	x = x & -x;
+	return DeBruijnBitPosition32[(x * 0x077CB531U) >> 27];
+}
+// 最上位ビットの1の位置
+int msb_pos32(unsigned int x) {
+	if(x==0U) return -1;
+	// 最上位ビットだけを残す
+	x |= (x >> 1);
+	x |= (x >> 2);
+	x |= (x >> 4);
+	x |= (x >> 8);
+	x |= (x >> 16);
+	x = x ^ (x >> 1);
+	return DeBruijnBitPosition32[(x * 0x077CB531U) >> 27];
+}
+// i bit目から上位ビット方向で最初に見つかる1の位置
+int find_upper_pos32(unsigned int x, int i) {
+	// i bit目未満をゼロに潰す
+	const unsigned int mask = (-(1U << i)) | (1U << i);
+	return lsb_pos32(x & mask);
+}
+// i bit目から下位ビット方向で最初に見つかる1の位置
+int find_lower_pos32(unsigned int x, int i) {
+	const unsigned int mask = ((1U << i) - 1U) | (1U << i);
+	return msb_pos32(x & mask);
+}
+
+inline constexpr int DeBruijnBitPosition64 [] = {
+	0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4,
+	62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5,
+	63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11,
+	54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6,
+};
+
+int msb_pos64(ULL x){
+	if (x == 0ULL) return -1;
+	//最上位ビットだけを残す
+	x |= (x >> 1);
+	x |= (x >> 2);
+	x |= (x >> 4);
+	x |= (x >> 8);
+	x |= (x >> 16);
+	x |= (x >> 32);
+	x = x ^ (x >> 1);
+	return DeBruijnBitPosition64[(x * 0x03f79d71b4ca8b09ULL) >> 58];
+}
+int lsb_pos64(ULL x){
+	if (x == 0ULL) return -1;
+	//最下位ビットだけを残す
+	x = x & -x;
+	return DeBruijnBitPosition64[(x * 0x03f79d71b4ca8b09ULL) >> 58];
+}
+// i bit目から上位ビット方向で最初に見つかる1の位置
+int find_upper_pos64(ULL x, int i) {
+	// i bit目未満をゼロに潰す
+	const ULL mask = (-(1ULL << i)) | (1ULL << i);
+	return lsb_pos64(x & mask);
+}
+// i bit目から下位ビット方向で最初に見つかる1の位置
+int find_lower_pos64(ULL x, int i) {
+	const ULL mask = ((1ULL << i) - 1ULL) | (1ULL << i);
+	return msb_pos64(x & mask);
+}
+
 // 最長増加部分列の長さ
 template<class T>
 size_t LIS(const vector<T> &ary){
