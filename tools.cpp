@@ -408,7 +408,7 @@ pair<T, vector<PII>> a_star(const vector<vector<T>> &cost_map, int start_row, in
 	// ヒューリスティック関数 h
 	auto heuristic = [&](int i, int j){return abs(i-end_row)+abs(j-end_col);};
 	// f=g+h
-	vector<vector<T>> f_value(row_max, VI(col_max, INF));
+	vector<vector<T>> f_value(row_max, vector<T>(col_max, numeric_limits<T>::max()/2));
 
 	auto to_id = [&](int i, int j){return i*col_max+j;};
 	auto to_point = [&](int id){return PII{id/col_max, id%col_max};};
