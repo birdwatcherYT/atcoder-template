@@ -547,6 +547,26 @@ public:
 	}
 };
 
+// 集合のハッシュ化: T=uint64_t, uint32_t, ULL, unsigned intなど
+template<class T>
+class ZobristHashing {
+	vector<T> h;
+public:
+	ZobristHashing(int size, mt19937& rand_engine) {
+		uniform_int_distribution<T> uniform(0, numeric_limits<T>::max());
+		h.reserve(size);
+		REP(i, size)
+			h.emplace_back(uniform(rand_engine));
+	}
+	T hash(const vector<T> &array) {
+		T value = 0;
+		for(auto e:array)
+			value ^= h[e];
+		return value;
+	}
+};
+
+
 // 増加可能経路を探し, 増加分のフローを返す
 // adj[i]: (j, capacity, 逆向き辺のindex)のリスト
 template<class T>
