@@ -145,7 +145,7 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 // const int SEED = random_device()();
 constexpr int SEED = 1;
 mt19937 rand_engine(SEED);
-// [0,1]
+// [0,1)
 double get_rand(){
 	uniform_real_distribution<double> rand01(0.0, 1.0);
 	return rand01(rand_engine);
