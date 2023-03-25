@@ -428,6 +428,7 @@ int main() {
 	REP(i, case_num){
 		timer.start();
 		if (DEBUG){
+			rand_engine.seed(SEED);
 			OUT("data_load");
 			string filename = to_string_zerofill(i, 4) + ".txt";
 			string file_path = DATA_DIR + filename;
