@@ -291,21 +291,31 @@ struct State {
 	}
 };
 
-double annealing(int loop_max, int verbose){
+// 時間制限
+constexpr int TIME_LIMIT = 5980;
+
+
+double annealing(ChronoTimer &timer, int loop_max, int verbose){
 	if(DEBUG) OUT("annealing");
-	double start_temp = 0.1;
-	double end_temp	= 0.001;
-	
+	constexpr double START_TEMP = 0.1;
+	constexpr double END_TEMP   = 0.001;
+
 	State state;
 	state.initialize();
-	
+
 	auto [score, annealing_score] = state.calc_score();
 	if(DEBUG) OUT("initial score:", score, "\t", annealing_score);
+	// ベスト解を別で持っておく場合
+	State best_state=state;
 
+	// 改善されないとき強制遷移させる間隔
+	constexpr int FORCE_UPDATE = 10000;
+	int no_update_times=0;
 	REP(loop, loop_max){
-		// 温度
-		double temp = start_temp + (end_temp - start_temp) * loop / loop_max; // 線形
-		// double temp = start_temp * pow(end_temp/start_temp, (double) loop / loop_max); // 指数
+		timer.end();
+		if(timer.time()>TIME_LIMIT)
+			break;
+
 		// State backup = state;
 		// 操作
 		int op = get_rand(2);
@@ -321,18 +331,40 @@ double annealing(int loop_max, int verbose){
 				swap(state.vec[j], state.vec[k]);
 			}
 		}
-		auto [current_score, current_annealing_score] = state.calc_score();
+		const auto [current_score, current_annealing_score] = state.calc_score();
 		
-		if (DEBUG && loop % verbose == 0)
-			OUT(loop, "\t:", score, "\t", annealing_score);
+		if (DEBUG && loop % verbose == 0){
+			// OUT(loop, "\t:", score, "\t", annealing_score);
+			OUT(loop, "\t:", score, "\t", annealing_score, "\t", best_state.score, "\t", best_state.annealing_score);
+		}
 
-		double probability = exp((annealing_score-current_annealing_score) / temp); 
 		if (current_annealing_score < annealing_score){
-			// 改善
+			// 改善された場合
+			no_update_times=0;
+			score = current_score;
+			annealing_score = current_annealing_score;
+			// ベスト解
+			if (current_annealing_score<best_state.annealing_score)
+				best_state=state;
+			continue;
+		}
+		// 改善されなかった場合
+		++no_update_times;
+		if (no_update_times>=FORCE_UPDATE){
+			// 強制遷移
+			no_update_times=0;
 			score = current_score;
 			annealing_score = current_annealing_score;
 			continue;
-		} else if (probability > get_rand()){
+		}
+		// 温度
+		const double temp = START_TEMP + (END_TEMP - START_TEMP) * loop / loop_max; // 線形
+		// const double temp = START_TEMP * pow(END_TEMP/START_TEMP, (double) loop / loop_max); // 指数
+		// const double temp = START_TEMP + (END_TEMP - START_TEMP) * (double) timer.time() / LIMIT; // 線形
+		// const double temp = START_TEMP * pow(END_TEMP/START_TEMP, (double) timer.time() / LIMIT); // 指数
+		const double probability = exp((annealing_score-current_annealing_score) / temp);
+		if (probability > get_rand()){
+			// 温度による遷移
 			score = current_score;
 			annealing_score = current_annealing_score;
 			continue;
@@ -353,13 +385,15 @@ double annealing(int loop_max, int verbose){
 		}
 	}
 	if(DEBUG){
-		OUT("final score:", score, "\t", annealing_score);
-		state.print_answer();
+		// OUT("final score:", score, "\t", annealing_score);
+		// state.print_answer();
+		OUT("final score:", best_state.score, "\t", best_state.annealing_score);
+		best_state.print_answer();
 	}
 	return score;
 }
 
-double chokudai_search(int loop_max, int max_turn, int chokudai_width, int verbose){
+double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int chokudai_width, int verbose){
 	if(DEBUG) OUT("chokudai_search");
 	State init;
 	init.initialize();
@@ -371,6 +405,9 @@ double chokudai_search(int loop_max, int max_turn, int chokudai_width, int verbo
 	vector< MAXPQ<State> > pq(max_turn+1);
 	pq[0].push(init);
 	REP(loop, loop_max){
+		timer.end();
+		if(timer.time()>TIME_LIMIT)
+			break;
 		REP(turn, max_turn){ // 各ターン
 			REP(_, chokudai_width){
 				if(pq[turn].empty()) break;
@@ -407,10 +444,13 @@ double beam_search(int max_turn, int beam_width, int verbose){
 				next_states.emplace_back(next);
 			}
 			// スコアが大きいほど良い
-			RSORT(next_states);
-			// 上位beam_width個まで絞る
-			while(SZ(next_states)>beam_width)
-				next_states.pop_back();
+			// RSORT(next_states);
+			// partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
+			nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
+
+			// 上位beam_width個に絞る
+			if (SZ(next_states)>beam_width)
+				next_states.resize(beam_width);
 		}
 		top_states = next_states;
 		if (DEBUG && turn % verbose == 0)
@@ -439,7 +479,7 @@ int main() {
 		}else{
 			data_load(cin);
 		}
-		double score = annealing(1000000, 100000);
+		double score = annealing(timer, 1000000, 100000);
 		timer.end();
 		if(DEBUG) {
 			auto time = timer.time();
