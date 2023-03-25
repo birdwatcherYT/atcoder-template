@@ -33,6 +33,7 @@
 
 ac-library
 *.stackdump
+*.core
 
 in/
 out/
