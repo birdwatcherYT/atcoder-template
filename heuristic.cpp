@@ -1,4 +1,12 @@
 #pragma GCC optimize("O3")
+
+#define DEBUG true
+// #define DEBUG false
+
+#if !DEBUG
+	#define NDEBUG // assertを無視
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -229,8 +237,6 @@ public:
 
 
 // データ
-constexpr bool DEBUG = true;
-// constexpr bool DEBUG = false;
 int N;
 VI init_vec;
 void data_load(istream &is){
