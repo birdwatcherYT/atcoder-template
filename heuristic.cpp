@@ -154,23 +154,23 @@ template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >
 constexpr int SEED = 1;
 mt19937 rand_engine(SEED);
 // [0,1)
-double get_rand(){
+inline double get_rand(){
 	uniform_real_distribution<double> rand01(0.0, 1.0);
 	return rand01(rand_engine);
 }
 // [0, n)
-int get_rand(int n){
+inline int get_rand(int n){
 	uniform_int_distribution<int> rand_n(0, n-1);
 	return rand_n(rand_engine);
 }
 // [l, u)
-int get_rand(int l, int u){
+inline int get_rand(int l, int u){
 	uniform_int_distribution<int> rand_lu(l, u-1);
 	return rand_lu(rand_engine);
 }
 // 累積和
 template<class T>
-vector<T> cumsum(const vector<T> &vec, bool zero_start){
+inline vector<T> cumsum(const vector<T> &vec, bool zero_start){
 	int n = SZ(vec) + zero_start;
 	vector<T> cumsum(n);
 	cumsum[0] = zero_start ? 0 : vec[0];
@@ -179,18 +179,18 @@ vector<T> cumsum(const vector<T> &vec, bool zero_start){
 	return cumsum;
 }
 template<class T>
-int __get_rand_index(const vector<T> &weight_cumsum){
+inline int __get_rand_index(const vector<T> &weight_cumsum){
 	double p = get_rand() * weight_cumsum.back();
 	return min((int)INSPOS(weight_cumsum, p), SZ(weight_cumsum)-1);
 }
 // 重みの割合でindex
 template<class T>
-int get_rand_index(const vector<T> &weight){
+inline int get_rand_index(const vector<T> &weight){
 	auto weight_cumsum = cumsum(weight, false);
 	return __get_rand_index(weight_cumsum);
 }
 // [0,n)から重複なしでr個選ぶ
-VI rand_choice(int n, int r){
+inline VI rand_choice(int n, int r){
 	VI candidates(n);
 	ARANGE(candidates);
 	VI result;
@@ -199,15 +199,15 @@ VI rand_choice(int n, int r){
 }
 
 // 画面クリア
-void clear_screen(){
+inline void clear_screen(){
 	cout << "\x1b[0;0H";
 }
 // スリープ
-void sleep(int msec){
+inline void sleep(int msec){
 	this_thread::sleep_for(chrono::milliseconds(msec));
 }
 // 数字ゼロ埋め文字列
-string to_string_zerofill(int num, int digit){
+inline string to_string_zerofill(int num, int digit){
 	std::ostringstream sout;
 	sout << std::setfill('0') << std::setw(digit) << num;
 	return sout.str();
@@ -469,6 +469,9 @@ double beam_search(int max_turn, int beam_width, int verbose){
 
 const string DATA_DIR = "./data/";
 int main() {
+	// ios::sync_with_stdio(false);
+	// std::cin.tie(nullptr);
+
 	ChronoTimer timer;
 	int case_num = DEBUG ? 5 : 1;
 	double sum_score = 0.0;
