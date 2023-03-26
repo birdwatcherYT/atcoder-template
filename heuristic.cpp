@@ -377,6 +377,8 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
 		}
 
 		// もとに戻す
+		// 逆操作が難しい場合はまるごとコピーする
+		// NOTE: 焼きなましは遷移が失敗することのほうが多いため、その場合はbackup側を変更して、成功時にstateに反映させたほうが速い
 		// state = backup;
 		switch(op){
 			case 0:
