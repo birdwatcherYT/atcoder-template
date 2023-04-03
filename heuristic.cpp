@@ -32,8 +32,8 @@
 #include <thread>
 #include <optional> // optional<int> f = nullopt; if(f) f.value();
 #include <regex> // regex_replace("target", regex("old"), "new");
-#define _PI	 3.14159265358979323846
-#define _E	  2.7182818284590452354
+#define MY_PI	 3.14159265358979323846
+#define MY_E	  2.7182818284590452354
 #define INF	 (INT_MAX / 2)
 #define LINF	(LLONG_MAX / 2)
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
@@ -179,7 +179,7 @@ inline vector<T> cumsum(const vector<T> &vec, bool zero_start){
 	return cumsum;
 }
 template<class T>
-inline int __get_rand_index(const vector<T> &weight_cumsum){
+inline int get_rand_index_with_cumsum_weight(const vector<T> &weight_cumsum){
 	double p = get_rand() * weight_cumsum.back();
 	return min((int)INSPOS(weight_cumsum, p), SZ(weight_cumsum)-1);
 }
@@ -187,7 +187,7 @@ inline int __get_rand_index(const vector<T> &weight_cumsum){
 template<class T>
 inline int get_rand_index(const vector<T> &weight){
 	auto weight_cumsum = cumsum(weight, false);
-	return __get_rand_index(weight_cumsum);
+	return get_rand_index_with_cumsum_weight(weight_cumsum);
 }
 // [0,n)から重複なしでr個選ぶ
 inline VI rand_choice(int n, int r){
@@ -216,23 +216,23 @@ inline string to_string_zerofill(int num, int digit){
 // CPU時間
 class ClockTimer{
 private:
-	clock_t _start, _end;
+	clock_t start_at, end_at;
 public:
 	ClockTimer(){}
-	inline void start() { _start = clock(); }
-	inline void end() { _end = clock(); }
-	inline clock_t time() const { return 1000*(_end-_start) / CLOCKS_PER_SEC; }// ミリ秒
+	inline void start() { start_at = clock(); }
+	inline void end() { end_at = clock(); }
+	inline clock_t time() const { return 1000*(end_at-start_at) / CLOCKS_PER_SEC; }// ミリ秒
 };
 
 // chronoは処理系によってCPU時間か実時間か変わるため注意
 class ChronoTimer{
 private:
-	chrono::high_resolution_clock::time_point _start, _end;
+	chrono::high_resolution_clock::time_point start_at, end_at;
 public:
 	ChronoTimer(){}
-	inline void start() { _start = chrono::high_resolution_clock::now(); }
-	inline void end() { _end = chrono::high_resolution_clock::now(); }
-	inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(_end - _start).count(); }// ミリ秒
+	inline void start() { start_at = chrono::high_resolution_clock::now(); }
+	inline void end() { end_at = chrono::high_resolution_clock::now(); }
+	inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(end_at - start_at).count(); }// ミリ秒
 };
 
 
@@ -406,7 +406,7 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
 	State init;
 	init.initialize();
 	
-	auto [score, _] = init.calc_score();
+	auto [score, s] = init.calc_score();
 	if(DEBUG) OUT("initial score:", score);
 
 	// スコアが大きいほど良い
@@ -417,7 +417,7 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
 		if(timer.time()>TIME_LIMIT)
 			break;
 		REP(turn, max_turn){ // 各ターン
-			REP(_, chokudai_width){
+			REP(w, chokudai_width){
 				if(pq[turn].empty()) break;
 				// 先頭参照
 				const State &state = pq[turn].top();
@@ -440,7 +440,7 @@ double beam_search(int max_turn, int beam_width, int verbose){
 	State init;
 	init.initialize();
 	
-	auto [score, _] = init.calc_score();
+	auto [score, s] = init.calc_score();
 	if(DEBUG) OUT("initial score:", score);
 
 	vector<State> top_states{init};

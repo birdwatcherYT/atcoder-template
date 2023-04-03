@@ -23,8 +23,8 @@
 #include <optional> // optional<int> f = nullopt; if(f) f.value();
 #include <regex> // regex_replace("target", regex("old"), "new");
 #include <random>
-#define _PI     3.14159265358979323846
-#define _E      2.7182818284590452354
+#define MY_PI     3.14159265358979323846
+#define MY_E      2.7182818284590452354
 #define INF     (INT_MAX / 2)
 #define LINF    (LLONG_MAX / 2)
 #define FOR(i, a, b) for(int i = (a); i < (b); ++i)
@@ -499,11 +499,11 @@ private:
 	VI dist;     // root からの距離
 
 	// 根からの距離と1つ先の頂点を求める
-	void _dfs(const VVI &adj, int v, int prev, int d) {
+	void lca_dfs(const VVI &adj, int v, int prev, int d) {
 		parent[0][v] = prev;
 		dist[v] = d;
 		for (int to : adj[v]) if (to != prev)
-			_dfs(adj, to, v, d + 1);
+			lca_dfs(adj, to, v, d + 1);
 	}
 public:
 	LCA(const VVI &adj, int root = 0) {
@@ -513,7 +513,7 @@ public:
 		parent.assign(log_n, VI(n, -1));
 		dist.assign(n, -1);
 		// parent[0]とdistを埋める
-		_dfs(adj, root, -1, 0);
+		lca_dfs(adj, root, -1, 0);
 		// ダブリング
 		REP(k, log_n - 1) {
 			REP(v, n)
@@ -570,12 +570,12 @@ public:
 // 増加可能経路を探し, 増加分のフローを返す
 // adj[i]: (j, capacity, 逆向き辺のindex)のリスト
 template<class T>
-T _max_flow(vector< vector< tuple<int, T, int> > >& adj, int v, int t, T f, VB &visit) {
+T max_flow_impl(vector< vector< tuple<int, T, int> > >& adj, int v, int t, T f, VB &visit) {
 	if (v == t) return f;
 	visit[v] = true;
 	for (auto& [to, cap, rev] : adj[v]) {
 		if (!visit[to] && cap > 0) {
-			T d = _max_flow(adj, to, t, min(f, cap), visit);
+			T d = max_flow_impl(adj, to, t, min(f, cap), visit);
 			if (d > 0) {
 				cap -= d;
 				T &rev_cap = get<1>(adj[to][rev]);
@@ -589,19 +589,19 @@ T _max_flow(vector< vector< tuple<int, T, int> > >& adj, int v, int t, T f, VB &
 // Ford-Fullkerson法: s-t最大フロー
 template<class T>
 T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
-	// _adj[i]: (j, capacity, 逆向き辺のindex)のリスト
-	vector< vector< tuple<int, T, int> > > _adj(n);
+	// adj_rev[i]: (j, capacity, 逆向き辺のindex)のリスト
+	vector< vector< tuple<int, T, int> > > adj_rev(n);
 	REP(i, n){
 		for(const auto&[j, cap]: adj[i]){
-			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
-			_adj[i].emplace_back(j, cap, size_j);
-			_adj[j].emplace_back(i, 0, size_i);// キャパゼロの逆向き辺
+			int size_i=SZ(adj_rev[i]), size_j=SZ(adj_rev[j]);
+			adj_rev[i].emplace_back(j, cap, size_j);
+			adj_rev[j].emplace_back(i, 0, size_i);// キャパゼロの逆向き辺
 		}
 	}
 
 	T flow = 0, f = 0;
 	VB visit(n, false);
-	while ((f = _max_flow(_adj, s, t, numeric_limits<T>::max()/2, visit)) > 0) { // 増加分
+	while ((f = max_flow_impl(adj_rev, s, t, numeric_limits<T>::max()/2, visit)) > 0) { // 増加分
 		flow += f;
 		fill(ALL(visit), false);
 	}
@@ -612,17 +612,17 @@ T max_flow(const vector< vector< pair<int, T> > >& adj, int n, int s, int t) {
 // 最小費用流: s->t
 template<class CAP, class COST>
 COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, int s, int t, CAP init_flow) {
-	// _adj[i]: (j, capacity, cost, 逆向き辺のindex)のリスト
-	vector< vector< tuple<int, CAP, COST, int> > > _adj(n);
+	// adj_rev[i]: (j, capacity, cost, 逆向き辺のindex)のリスト
+	vector< vector< tuple<int, CAP, COST, int> > > adj_rev(n);
 	REP(i, n){
 		for(const auto&[j, cap, cost]: adj[i]){
-			int size_i=SZ(_adj[i]), size_j=SZ(_adj[j]);
-			_adj[i].emplace_back(j, cap, cost, size_j);
-			_adj[j].emplace_back(i, 0, -cost, size_i);// キャパゼロの逆向き辺
+			int size_i=SZ(adj_rev[i]), size_j=SZ(adj_rev[j]);
+			adj_rev[i].emplace_back(j, cap, cost, size_j);
+			adj_rev[j].emplace_back(i, 0, -cost, size_i);// キャパゼロの逆向き辺
 		}
 	}
 
-	const COST _INF = numeric_limits<COST>::max()/2;
+	const COST COST_INF = numeric_limits<COST>::max()/2;
 	vector<COST> dist(n);
 	VI prev_vertex(n);
 	VI prev_index(n);
@@ -630,14 +630,14 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
 	COST ans = 0;
 	CAP flow = init_flow;
 	while (flow > 0) {
-		fill(ALL(dist), _INF);
+		fill(ALL(dist), COST_INF);
 		dist[s] = 0;
 		while (true) {
 			bool update = false;
 			REP(v, n){
-				if (dist[v] == _INF) continue;
-				REP(i, SZ(_adj[v])) {
-					const auto &[to, cap, cost, rev] = _adj[v][i];
+				if (dist[v] == COST_INF) continue;
+				REP(i, SZ(adj_rev[v])) {
+					const auto &[to, cap, cost, rev] = adj_rev[v][i];
 					if (cap > 0 && dist[to] > dist[v] + cost) {
 						dist[to] = dist[v] + cost;
 						prev_vertex[to] = v;
@@ -649,18 +649,18 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
 			if (!update) break;
 		}
 
-		if (dist[t] == _INF) return _INF;
+		if (dist[t] == COST_INF) return COST_INF;
 
 		CAP d = flow;
 		for (int v = t; v != s; v = prev_vertex[v]) {
-			const CAP& cap = get<1>(_adj[prev_vertex[v]][prev_index[v]]);
+			const CAP& cap = get<1>(adj_rev[prev_vertex[v]][prev_index[v]]);
 			d = min(d, cap);
 		}
 		flow -= d;
 		ans += dist[t] * d;
 		for (int v = t; v != s; v = prev_vertex[v]) {
-			auto &[to, cap, cost, rev] = _adj[prev_vertex[v]][prev_index[v]];
-			CAP &rev_cap = get<1>(_adj[to][rev]);
+			auto &[to, cap, cost, rev] = adj_rev[prev_vertex[v]][prev_index[v]];
+			CAP &rev_cap = get<1>(adj_rev[to][rev]);
 			cap -= d;
 			rev_cap += d;
 		}
@@ -714,29 +714,29 @@ VI dfs(const vector< vector< pair<int, T> > > &adj, int n, int s){  // (隣接, 
 
 // 深さ優先（再帰）で訪問したノードの順番を返す
 template<class T>
-void _dfs_recursive(const vector< vector< pair<int, T> > > &adj, int s, VB &seen, VI &visit){
+void dfs_recursive_impl(const vector< vector< pair<int, T> > > &adj, int s, VB &seen, VI &visit){
 	if (!seen[s])
 		visit.emplace_back(s);
 	seen[s] = true;
 	for (auto [to, cost] : adj[s]){
 		if (!seen[to])
-			_dfs_recursive(adj, to, seen, visit);
+			dfs_recursive_impl(adj, to, seen, visit);
 	}
 }
 template<class T>
 VI dfs_recursive(const vector< vector< pair<int, T> > > &adj, int n, int s){
 	VB seen(n, false);
 	VI visit;
-	_dfs_recursive(adj, s, seen, visit);
+	dfs_recursive_impl(adj, s, seen, visit);
 	return visit;
 }
 
 // 深さ優先で抜けるときにpushする
-void _sccd(const VVI &adj, int s, VB &seen, VI &visit){
+void sccd_impl(const VVI &adj, int s, VB &seen, VI &visit){
 	seen[s] = true;
 	EACH(to, adj[s])
 		if (!seen[to])
-			_sccd(adj, to, seen, visit);
+			sccd_impl(adj, to, seen, visit);
 	visit.emplace_back(s);
 }
 // Strongly Connected Component Decomposition (強連結成分分解)
@@ -746,7 +746,7 @@ VVI sccd(const VVI &adj, int n){
 	VI visit;
 	REP(s, n){
 		if (!seen[s])
-			_sccd(adj, s, seen, visit);
+			sccd_impl(adj, s, seen, visit);
 	}
 	// 2. 反転させたグラフをDFSの逆順でたどる
 	VVI adj_rev(n);
@@ -758,7 +758,7 @@ VVI sccd(const VVI &adj, int n){
 		if (seen[*it])
 			continue;
 		VI component;
-		_sccd(adj_rev, *it, seen, component);
+		sccd_impl(adj_rev, *it, seen, component);
 		connected.emplace_back(component);
 	}
 	return connected;
@@ -793,13 +793,13 @@ VI topological_sort(const VVI &adj, int n){
 }
 
 // ループを持つかどうか
-bool _contains_loop(const VVI &adj, int s, VB &seen, int prev, bool direct){
+bool contains_loop_impl(const VVI &adj, int s, VB &seen, int prev, bool direct){
 	if (seen[s])
 		return true;
 	seen[s] = true;
 	EACH(to, adj[s]){
 		if(direct && prev==to) return true;// 有向グラフで頂点間を行き来できる場合
-		if (prev!=to && _contains_loop(adj, to, seen, s, direct))
+		if (prev!=to && contains_loop_impl(adj, to, seen, s, direct))
 			return true;
 	}
 	return false;
@@ -807,7 +807,7 @@ bool _contains_loop(const VVI &adj, int s, VB &seen, int prev, bool direct){
 bool contains_loop(const VVI &adj, int n, bool direct){// direct: 有向グラフならtrue
 	VB seen(n, false);
 	REP(i, n)
-		if (!seen[i] && _contains_loop(adj, i, seen, -1, direct))
+		if (!seen[i] && contains_loop_impl(adj, i, seen, -1, direct))
 			return true;
 	return false;
 }
@@ -960,26 +960,26 @@ private:
 		}
 		throw runtime_error("not support mode");
 	}
-	void __update(int a, int b, T val, int i, int l, int r) {
+	void update_impl(int a, int b, T val, int i, int l, int r) {
 		eval(i);
 		if (a <= l && r <= b) { // 範囲内のとき
 			lazy[i] = to_lazy_value(l, r, val);
 			upd[i] = true;
 			eval(i);
 		} else if (a < r && l < b) {
-			__update(a, b, val, i * 2 + 1, l, (l + r) / 2);
-			__update(a, b, val, i * 2 + 2, (l + r) / 2, r);
+			update_impl(a, b, val, i * 2 + 1, l, (l + r) / 2);
+			update_impl(a, b, val, i * 2 + 2, (l + r) / 2, r);
 			data[i] = op(data[i * 2 + 1], data[i * 2 + 2]);
 		}
 	}
-	T __query(int a, int b, int i, int l, int r) {
+	T query_impl(int a, int b, int i, int l, int r) {
 		eval(i);
 		if (r <= a || b <= l) // 範囲外のとき
 			return default_val;
 		if (a <= l && r <= b)// 範囲内のとき
 			return data[i];
-		T vl = __query(a, b, i * 2 + 1, l, (l + r) / 2);
-		T vr = __query(a, b, i * 2 + 2, (l + r) / 2, r);
+		T vl = query_impl(a, b, i * 2 + 1, l, (l + r) / 2);
+		T vr = query_impl(a, b, i * 2 + 2, (l + r) / 2, r);
 		return op(vl, vr);
 	}
 	void eval(int i) {
@@ -996,11 +996,11 @@ private:
 		upd[i] = false;
 	}
 public:
-	SegmentTree(int n, Mode _mode) {// [0,n)の範囲を持つセグメント木
+	SegmentTree(int n, Mode m) {// [0,n)の範囲を持つセグメント木
 		int x = 1;
 		while(n > x)
 			x *= 2;
-		mode = _mode;
+		mode = m;
 		num_leaves = x;
 		default_val = default_value();
 		data.resize(num_leaves*2-1, default_val);
@@ -1008,16 +1008,16 @@ public:
 		upd.resize(num_leaves*2-1, false);
 	}
 	void update(int a, int b, T val) {// [a,b)区間の値をvalに更新 (合計値の木ではvalを加算)
-		__update(a, b, val, 0, 0, num_leaves);
+		update_impl(a, b, val, 0, 0, num_leaves);
 	}
 	void update(int i, T val) {// 値を更新 (合計値の木ではvalを加算)
-		__update(i, i+1, val, 0, 0, num_leaves);
+		update_impl(i, i+1, val, 0, 0, num_leaves);
 	}
 	T query(int a, int b) {// [a,b)の最大値/最小値/合計値を取得
-		return __query(a, b, 0, 0, num_leaves);
+		return query_impl(a, b, 0, 0, num_leaves);
 	}
 	T query(int i) {// iの最大値/最小値/合計値を取得
-		return __query(i, i+1, 0, 0, num_leaves);
+		return query_impl(i, i+1, 0, 0, num_leaves);
 	}
 	// 表示用
 	friend ostream& operator<<(ostream& os, const SegmentTree& st){
@@ -1042,7 +1042,7 @@ class BIT {
 	int n;
 	vector<T> bit;
 public:
-	BIT(int _n) : n(_n + 1), bit(n, 0) {}
+	BIT(int sz) : n(sz + 1), bit(n, 0) {}
 	// a[i] += val ただし i in [0, n)
 	void add(int i, T val) {
 		for (int idx = i+1; idx <= n; idx += (idx & -idx))
@@ -1516,7 +1516,7 @@ int main() {
 	int n1, m1, start;
 	iss1 >> n1 >> m1 >> start;
 	vector< vector<PII> > adj1(n1);
-	REP(_, m1){
+	REP(i, m1){
 		int s, t, cost;
 		iss1 >> s >> t >> cost;
 		adj1[s].emplace_back(t, cost);
@@ -1545,7 +1545,7 @@ int main() {
 	int n2, m2;
 	iss2 >> n2 >> m2;
 	VVI adj2(n2);
-	REP(_, m2){
+	REP(i, m2){
 		int s, t;
 		iss2 >> s >> t;
 		adj2[s].emplace_back(t);
