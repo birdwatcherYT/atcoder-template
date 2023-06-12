@@ -895,6 +895,33 @@ T kruskal(const vector< tuple<T,int,int> > &edges, int n) {
 	return min_cost;
 }
 
+// プリム法
+template<class T>
+T prim(const vector<vector<pair<int, T>>> &adj, int n) {
+	vector<T> mincost(n, numeric_limits<T>::max()/2);
+	VB seen(n, false);
+	T sum = 0;
+	MINPQ<pair<T, int>> pq;
+	// 0スタート
+	pq.emplace(0, 0);
+	while (!pq.empty()) {
+		auto[v_cost,v]=pq.top();
+		pq.pop();
+		if(seen[v])continue;
+		seen[v] = true;
+		mincost[v]=v_cost;
+		sum += v_cost;
+		// 隣接頂点について最小コストを更新
+		for(auto[to, to_cost]: adj[v]){
+			if(!seen[to] && mincost[to]>to_cost){
+				mincost[to]=to_cost;
+				pq.emplace(to_cost, to);
+			}
+		}
+	}
+	return sum;
+}
+
 template <class T>
 class SegmentTree {
 public:
@@ -1599,5 +1626,6 @@ int main() {
 	dump(split_str("a|bc||d", '|', false))
 	dump(split_str("|a|bc||d||", '|', true))
 	dump(split_str("|a|bc||d||", '|', false))
+
 	return 0;
 }
