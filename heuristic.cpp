@@ -398,7 +398,7 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
 		OUT("final score:", best_state.score, "\t", best_state.annealing_score);
 		best_state.print_answer();
 	}
-	return score;
+	return best_state.score;
 }
 
 double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int chokudai_width, int verbose){
