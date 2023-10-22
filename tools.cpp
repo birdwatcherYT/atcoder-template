@@ -317,6 +317,271 @@ T to_base10(const string &x, int b){
 	return ans;
 }
 
+// 分数
+template<class T>
+class Frac {
+    //a,bともに整数系のクラス
+    T a, b; //  a/b
+    void trim(){
+        if (a == 0) {
+            b = 1;
+            return;
+        }
+        assert(b != 0);
+        T g = gcd(abs(a), abs(b));
+        a /= g, b /= g;
+    }
+public:
+    static const Frac<T> ZERO;
+    static const Frac<T> ONE;
+
+    Frac(){ a = 0, b = 1; }
+    Frac(const T& a, const T& b = 1){ this->a = a, this->b = b; trim(); }
+
+    T getBelow()const{ return abs(b); }
+    T getAbove()const{ return abs(a); }
+    int getSign()const{
+        if (a == 0) return 0;
+        if ((a > 0) ^ (b > 0)) return -1;
+        return 1;
+    }
+    void setValue(const T& a, const T& b = 1){ this->a = a, this->b = b; trim(); }
+
+    Frac<T> add(const Frac<T> &f)const{
+        Frac<T> ans;
+        T g = gcd(abs(b), abs(f.b));
+        ans.a = (f.b / g) * a + (b / g) * f.a;
+        ans.b = (b / g) * f.b;
+        ans.trim();
+        return ans;
+    }
+    Frac<T> subtract(const Frac<T> &f)const {
+        Frac<T> ans = f;
+        ans.a = -ans.a;
+        return this->add(ans);
+    }
+    Frac<T> multiply(const Frac<T> &f)const {
+        Frac<T> ans;
+        ans.a = a * f.a;
+        ans.b = b * f.b;
+        ans.trim();
+        return ans;
+    }
+    Frac<T> divide(const Frac<T> &f) const {
+        Frac<T> ans;
+        ans.a = a * f.b;
+        ans.b = b * f.a;
+        ans.trim();
+        return ans;
+    }
+    Frac<T> inverse()const{ return Frac<T>(b, a); }
+    Frac<T> pow(const int& n)const{
+        Frac<T> ans = ONE, tmp = *this;
+        int exp = n;
+        if (n < 0) {
+            exp = -n;
+            tmp = inverse();
+        }
+        if (exp & 1)ans = tmp;
+        while (exp != 0) {
+            tmp = tmp.multiply(tmp);
+            if ((exp >>= 1)&1)ans = ans.multiply(tmp);
+        }
+        return ans;
+    }
+    bool equal(const Frac<T> &f)const{
+        if (getSign() == f.getSign() && abs(a) == abs(f.a) && abs(b) == abs(f.b)) 
+            return true;
+        return false;
+    }
+    void print(std::ostream &os = std::cout)const{
+        if (getSign() < 0)os << '-';
+        os << abs(a);
+        if (abs(b) != 1) os << '/' << abs(b);
+    }
+
+    bool isInt()const { return (abs(b) == 1); }
+    T toInt() const { return a / b; }
+    double toDouble() const { return (double) a / b; }
+    static Frac<T> createOne(){ Frac<T> one; one.a = 1, one.b = 1; return one; }
+
+    Frac<T>& operator=(const T& n) { setValue(n); return *this; }
+    Frac<T> operator++() { *this = *this+ONE; return *this; }
+    Frac<T> operator++(int n) { Frac<T> tmp = *this; *this = *this+ONE; return tmp; }
+    Frac<T> operator--() { *this = *this-ONE; return *this; }
+    Frac<T> operator--(int n) { Frac<T> tmp = *this; *this = *this-ONE; return tmp; }
+    Frac<T> operator-() const { return Frac<T>(-a, b); }
+    Frac<T> operator+() const { return *this; }
+    Frac<T> operator+(const Frac<T> &f) const { return this->add(f); }
+    Frac<T> operator-(const Frac<T> &f) const { return this->subtract(f); }
+    Frac<T> operator*(const Frac<T> &f) const { return this->multiply(f); }
+    Frac<T> operator/(const Frac<T> &f) const { return this->divide(f); }
+    Frac<T> operator+(const T& n) const { return this->add(Frac<T>(n, 1)); }
+    Frac<T> operator-(const T &n) const { return this->subtract(Frac<T>(n, 1)); }
+    Frac<T> operator*(const T& n) const { return this->multiply(Frac<T>(n, T(1)));}
+    Frac<T> operator/(const T& n) const { return this->divide(Frac<T>(n, T(1))); }
+    Frac<T> operator ^(const int& n) const { return pow(n); }
+    Frac<T>& operator+=(const Frac<T> &f) { *this = *this+f; return *this; }
+    Frac<T>& operator-=(const Frac<T> &f) { *this = *this-f; return *this; }
+    Frac<T>& operator*=(const Frac<T> &f) { *this = *this*f; return *this; }
+    Frac<T>& operator/=(const Frac<T> &f) { *this = *this / f; return *this; }
+    Frac<T>& operator+=(const T& n) { *this = *this+n; return *this; }
+    Frac<T>& operator-=(const T& n) { *this = *this-n; return *this; }
+    Frac<T>& operator*=(const T& n) { *this = *this*n; return *this; }
+    Frac<T>& operator/=(const T& n) { *this = *this / n; return *this; }
+    bool operator==(const Frac<T>& f) const { return equal(f); }
+    bool operator<(const Frac<T> &f)const { return subtract(f).getSign() < 0; }
+    bool operator>(const Frac<T> &f)const { return subtract(f).getSign() > 0; }
+    bool operator<=(const Frac<T> &f)const { return subtract(f).getSign() <= 0; }
+    bool operator>=(const Frac<T> &f)const { return subtract(f).getSign() >= 0; }
+    bool operator!=(const Frac<T> &f)const { return !equal(f); }
+    bool operator==(const T &n)const { return equal(Frac<T>(n)); }
+    bool operator<(const T &n)const { return subtract(Frac<T>(n)).getSign() < 0; }
+    bool operator>(const T &n)const { return subtract(Frac<T>(n)).getSign() > 0; }
+    bool operator<=(const T &n)const { return subtract(Frac<T>(n)).getSign() <= 0; }
+    bool operator>=(const T &n)const { return subtract(Frac<T>(n)).getSign() >= 0; }
+    bool operator!=(const T &n)const { return !equal(Frac<T>(n)); }
+
+    template<class U> friend Frac<U> operator+(const U&n, const Frac<U> &f) { return f + n; }
+    template<class U> friend Frac<U> operator-(const U& n, const Frac<U> &f) { return -f + n; }
+    template<class U> friend Frac<U> operator*(const U& n, const Frac<U> &f) { return f*n; }
+    template<class U> friend Frac<U> operator/(const U& n, const Frac<U> &f) { return n * f.inverse(); }
+    template<class U> friend std::ostream& operator<<(std::ostream& os, const Frac<U>& f) { f.print(os); return os; }
+};
+template<class T> const Frac<T> Frac<T>::ONE = createOne();
+template<class T> const Frac<T> Frac<T>::ZERO;
+
+
+template<class T>
+optional<T> __simplex(vector<vector<T>> &a, int n_row, int n_col, VI& index){
+    while(true){
+        // 列選択
+        int y=-1;
+        for (int k = 1; k < n_col; k++)if(a[n_row - 1][k] < 0){
+            y=k;
+            break;
+        }
+        if (y < 0) break;
+
+        // 行選択
+        int x=-1, base_index=INF;
+        T minval;
+        for (int k = 0; k < n_row - 1; k++)if (a[k][y] > 0) {
+            T p = a[k][0] / a[k][y];
+            if (x<0 || p < minval) {
+                minval=p, x = k, base_index=index[k];
+            }else if(p==minval && index[k]<base_index){
+                x = k, base_index=index[k];
+            }
+        }
+        // 解なし
+        if(x<0)
+            return nullopt;
+        // ピボット係数
+        T p = a[x][y];
+
+        // ピボット係数を p で除算
+        for (int k = 0; k < n_col; k++)
+            a[x][k] = a[x][k] / p;
+
+        // ピボット列の掃き出し
+        for (int k = 0; k < n_row; k++)if (k != x) {
+            T d = a[k][y];
+            for (int j = 0; j < n_col; j++)
+                a[k][j] = a[k][j] - d * a[x][j];
+        }
+        // 基底変数の添字変更
+        index[x]=y;
+    }
+    return a[n_row - 1][0];
+}
+
+// max  cx
+// s.t. Ax<=b, x>=0
+// is_eq: 等号かどうか
+// NOTE: double型で使うには誤差を許容させる必要がある
+template<class T>
+optional<T> simplex(const vector<vector<T>> &A, const vector<T> &b, const VB& is_eq, const vector<T> &c){
+    // 人為変数, スラック変数
+    int n_art=0, n_slk=0;
+    REP(i, SZ(b)){
+        if(!is_eq[i])n_slk++;
+        if(is_eq[i] || b[i]<0)
+            n_art++;
+    }
+    // 変数
+    int n_var=SZ(c);
+    // 行数
+    int n_row = SZ(A)+1;
+    // 列数
+    int n_col = 1+n_var+n_slk+n_art;
+    // 基底
+    VI index(SZ(A));
+    // 単体表: [定数, 変数, スラック, 人為]
+    vector<vector<T>> a(n_row, vector<T>(n_col, 0));
+    int na=0, ns=0;
+    REP(i, SZ(A)){
+        // 定数列
+        a[i][0]=b[i]<0 ? -b[i] : b[i];
+        // 変数列
+        REP(j, n_var){
+            a[i][1+j]= b[i]<0 ?-A[i][j]: A[i][j];
+        }
+        // スラック変数
+        if(!is_eq[i])
+            a[i][1+n_var+ns]=b[i]<0 ? -1 : 1;
+        // 基底
+        if(is_eq[i] || b[i]<0)
+            index[i]=1+n_var+n_slk+na;
+        else
+            index[i]=1+n_var+ns;
+        // 位置
+        if(is_eq[i] || b[i]<0)
+            na++;
+        if(!is_eq[i])
+            ns++;
+    }
+    if(n_art!=0){
+        // 1st stageの目的関数
+        // 目的関数(sum -人為変数)に含まれる基底を除外する
+        // 人為変数を含んだ列を全て引く(ただし、定数/通常変数/スラック変数のみ)
+        REP(i, SZ(A))if(is_eq[i] || b[i]<0){
+            for(int j=0; j<=n_var+n_slk; ++j)
+                a[n_row-1][j]-=a[i][j];
+        }
+        // 実行可能性チェック
+        if(!__simplex(a, n_row, n_col, index) && a[n_row-1][0]!=0)
+            return nullopt;
+        // 2nd stageの目的関数行
+        // 人為変数以外の列を0クリア
+        for(int j=0;j<=n_var+n_slk;++j)
+            a[n_row-1][j]=0;
+        // 本来の目的関数の係数のマイナスをセット
+        REP(j, n_var)
+            a[n_row-1][1+j]=-c[j];
+        // 目的関数から初期基底を除外する
+        REP(i, n_row-1){
+            T coeff;
+            if(index[i]==0)
+                continue;
+            else if(index[i]<=n_var)
+                coeff=c[index[i]-1];
+            else if(index[i]<=n_var+n_slk)
+                continue;
+            else
+                coeff=-1;
+            for(int j=0;j<n_col-n_art;++j)
+                a[n_row-1][j] += coeff * a[i][j];
+        }
+        return __simplex(a, n_row, n_col-n_art, index);
+    }else{
+        // 普通に解く
+        REP(j, n_var)
+            a[n_row-1][1+j]=-c[j];
+        return __simplex(a, n_row, n_col, index);
+    }
+}
+
 // 2分探索
 template<class T>
 int bsearch(const vector<T> &vec, T key, bool lower_bound=true){
