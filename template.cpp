@@ -60,62 +60,62 @@
 using namespace std;
 
 template<class T> vector<size_t> argsort(const vector<T> &vec, bool asc=true){
-	vector<size_t> index(vec.size()); iota(index.begin(), index.end(), 0);
-	sort(index.begin(), index.end(), [&vec, &asc](size_t i, size_t j){return asc ? (vec[i] < vec[j]):(vec[i] > vec[j]);});
-	return index;
+    vector<size_t> index(vec.size()); iota(index.begin(), index.end(), 0);
+    sort(index.begin(), index.end(), [&vec, &asc](size_t i, size_t j){return asc ? (vec[i] < vec[j]):(vec[i] > vec[j]);});
+    return index;
 }
 // 表示系
 template<class T1, class T2> ostream& operator<<(ostream& os, const pair<T1, T2>& p) {
-	os << "(" << p.first << ", " << p.second << ")";
-	return os;
+    os << "(" << p.first << ", " << p.second << ")";
+    return os;
 }
 template<class... T> ostream& operator<<(ostream& os, const tuple<T...>& t) {
-	os << "("; apply([&os](auto&&... args) {((os << args << ", "), ...);}, t);
-	os << ")"; return os;
+    os << "("; apply([&os](auto&&... args) {((os << args << ", "), ...);}, t);
+    os << ")"; return os;
 }
 template<class T> ostream& operator<<(ostream& os, const vector<T>& vec) {
-	os << "[ "; for ( const T& item : vec ) os << item << ", ";
-	os << "]"; return os;
+    os << "[ "; for ( const T& item : vec ) os << item << ", ";
+    os << "]"; return os;
 }
 template<class T> ostream& operator<<(ostream& os, const set<T>& s) {
-	os << "{ "; for ( const T& item : s ) os << item << ", ";
-	os << "}"; return os;
+    os << "{ "; for ( const T& item : s ) os << item << ", ";
+    os << "}"; return os;
 }
 template<class T> ostream& operator<<(ostream& os, const multiset<T>& s) {
-	os << "{ "; for ( const T& item : s ) os << item << ", ";
-	os << "}"; return os;
+    os << "{ "; for ( const T& item : s ) os << item << ", ";
+    os << "}"; return os;
 }
 template<class T1, class T2> ostream& operator<<(ostream& os, const map<T1, T2>& m) {
-	os << "{ "; for ( const auto &[key, value] : m ) os << key << ":"<< value << ", ";
-	os << "}"; return os;
+    os << "{ "; for ( const auto &[key, value] : m ) os << key << ":"<< value << ", ";
+    os << "}"; return os;
 }
 template <class Head> void OUT(Head&& head) {cout << head << endl;}
 template <class Head, class... Tail> void OUT(Head&& head, Tail&&... tail) {cout << head << " ";OUT(forward<Tail>(tail)...);}
 // 入力系
 template<class T1, class T2> istream& operator>>(istream& is, pair<T1, T2>& p) {
-	is >> p.first >> p.second;
-	return is;
+    is >> p.first >> p.second;
+    return is;
 }
 template<class... T> istream& operator>>(istream& is, tuple<T...>& t) {
-	apply([&is](auto&&... args) {((is >> args), ...);}, t);
-	return is;
+    apply([&is](auto&&... args) {((is >> args), ...);}, t);
+    return is;
 }
 template<class T> istream& operator>>(istream& is, vector<T>& vec) {
-	for ( T& item : vec ) is >> item;
-	return is;
+    for ( T& item : vec ) is >> item;
+    return is;
 }
 // 集合演算
 template<class T> set<T> operator&(const set<T>& a, const set<T>& b) {// 共通集合
-	set<T> ans; set_intersection(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
-	return ans;
+    set<T> ans; set_intersection(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
+    return ans;
 }
 template<class T> set<T> operator|(const set<T>& a, const set<T>& b) {// 和集合
-	set<T> ans; set_union(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
-	return ans;
+    set<T> ans; set_union(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
+    return ans;
 }
 template<class T> set<T> operator-(const set<T>& a, const set<T>& b) {// 差集合
-	set<T> ans; set_difference(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
-	return ans;
+    set<T> ans; set_difference(a.begin(), a.end(), b.begin(), b.end(), inserter(ans, ans.end()));
+    return ans;
 }
 
 using LL = long long; using ULL = unsigned long long;
@@ -145,11 +145,12 @@ istringstream debug_iss(R"(
 template <class Head> void IN(Head&& head) {cin >> head;}
 template <class Head, class... Tail> void IN(Head&& head, Tail&&... tail) {cin >> head;IN(forward<Tail>(tail)...);}
 
+
 int main() {
-	int n;
-	IN(n);
-	VI nums(n);
-	IN(nums);
-	OUT(n, nums);
-	return 0;
+    int n;
+    IN(n);
+    VI nums(n);
+    IN(nums);
+    OUT(n, nums);
+    return 0;
 }
