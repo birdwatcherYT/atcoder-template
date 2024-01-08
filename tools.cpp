@@ -48,6 +48,9 @@
 #define ARGMAX(v) (max_element((v).begin(), (v).end()) - (v).begin())
 #define REVERSE(v) reverse((v).begin(), (v).end())
 #define ARANGE(v) iota((v).begin(), (v).end(), 0)
+#define COUNT(v, e) count((v).begin(), (v).end(), e)
+#define ROTATE_L(v) rotate((v).begin(), (v).begin()+1, (v).end())
+#define ROTATE_R(v) rotate((v).rbegin(), (v).rbegin()+1, (v).rend())
 #define FILTER(src, tgt, func) copy_if(begin(src), end(src), back_inserter(tgt), func); // func = [](type x){return 条件;}
 #define CTOI(c) (c - '0')
 #define HEADSTR(str, n) str.substr(0, (n))
