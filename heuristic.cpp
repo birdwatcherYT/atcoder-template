@@ -31,6 +31,7 @@
 #include <chrono>
 #include <thread>
 #include <optional> // optional<int> f = nullopt; if(f) f.value();
+#include <functional> // function<int(int)> frac; frac = [&](int i){ return i <= 0 ? 1 : i*frac(i-1); };
 #include <regex> // regex_replace("target", regex("old"), "new");
 #define MY_PI     3.14159265358979323846
 #define MY_E      2.7182818284590452354

@@ -21,6 +21,7 @@
 #include <cassert> // assert();
 #include <iomanip> // cout << setprecision(15); cout << setfill('0') << std::right << setw(3);
 #include <optional> // optional<int> f = nullopt; if(f) f.value();
+#include <functional> // function<int(int)> frac; frac = [&](int i){ return i <= 0 ? 1 : i*frac(i-1); };
 #include <regex> // regex_replace("target", regex("old"), "new");
 #include <random>
 #define MY_PI     3.14159265358979323846
