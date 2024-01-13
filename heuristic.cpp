@@ -415,7 +415,7 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
 
     // スコアが大きいほど良い
     vector< MAXPQ<State> > pq(max_turn+1);
-    pq[0].push(init);
+    pq[0].emplace(init);
     REP(loop, loop_max){
         timer.end();
         if(timer.time()>TIME_LIMIT)
@@ -427,7 +427,7 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
                 const State &state = pq[turn].top();
                 for(State& next : state.next_states()){
                     next.calc_score();
-                    pq[turn+1].push(next);
+                    pq[turn+1].emplace(next);
                 }
                 // 先頭削除
                 pq[turn].pop();
@@ -457,8 +457,8 @@ double beam_search(int max_turn, int beam_width, int verbose){
             }
             // スコアが大きいほど良い
             // RSORT(next_states);
-            // partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
-            nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
+            partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
+            // nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
 
             // 上位beam_width個に絞る
             if (SZ(next_states)>beam_width)
@@ -469,6 +469,7 @@ double beam_search(int max_turn, int beam_width, int verbose){
             OUT(turn, "\t:", top_states.front().score);
     }
     return top_states.front().score;
+    // return MAX(top_states).score;
 }
 
 const string DATA_DIR = "./data/";
