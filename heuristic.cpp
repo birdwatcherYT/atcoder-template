@@ -290,8 +290,8 @@ struct State {
     // ターンがあるような場合
     vector<State> next_states() const {
         // 未実装
-        vector<State> next;
-        return next;
+        vector<State> nexts;
+        return nexts;
     }
     bool operator<(const State& s) const {
         return score < s.score;
@@ -302,7 +302,9 @@ struct State {
 };
 
 // 時間制限
-constexpr int TIME_LIMIT = 5980;
+constexpr int TIME_LIMIT = 1980;
+
+// メモ: greedy, DP
 
 
 double annealing(ChronoTimer &timer, int loop_max, int verbose){
