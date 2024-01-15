@@ -263,7 +263,8 @@ void data_generate(){
 struct State {
     VI vec;
     double score;
-    double annealing_score;
+    // 小さいほどよい
+    double custom_score;
 
     State(){}
     void initialize(){
@@ -274,13 +275,13 @@ struct State {
     }
     tuple<double, double> calc_score() {
         score = 0;
-        annealing_score = 0;
+        custom_score = 0;
         // スコア ----------
         REP(i, N-1)
             score += (vec[i]<vec[i+1]);
-        annealing_score = -score;
+        custom_score = -score;
         // -----------------
-        return {score, annealing_score};
+        return {score, custom_score};
     }
     void print_answer() const {
         // 答え表示 ---------
@@ -294,10 +295,10 @@ struct State {
         return nexts;
     }
     bool operator<(const State& s) const {
-        return score < s.score;
+        return custom_score < s.custom_score;
     }
     bool operator>(const State& s) const {
-        return score > s.score;
+        return custom_score > s.custom_score;
     }
 };
 
@@ -315,12 +316,12 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
     State state;
     state.initialize();
 
-    auto [score, annealing_score] = state.calc_score();
-    if(DEBUG) OUT("initial score:", score, "\t", annealing_score);
+    auto [score, custom_score] = state.calc_score();
+    if(DEBUG) OUT("initial score:", score, "\t", custom_score);
     // ベスト解を別で持っておく場合
     State best_state=state;
 
-    // 改善されないとき強制遷移させる間隔
+    // 改善されないとき強制遷移させる間隔(山登りで破壊したいとき)
     constexpr int FORCE_UPDATE = 10000;
     int no_update_times=0;
     REP(loop, loop_max){
@@ -343,20 +344,20 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
                 swap(state.vec[j], state.vec[k]);
             }
         }
-        const auto [current_score, current_annealing_score] = state.calc_score();
+        const auto [current_score, current_custom_score] = state.calc_score();
         
         if (DEBUG && loop % verbose == 0){
-            // OUT(loop, "\t:", score, "\t", annealing_score);
-            OUT(loop, "\t:", score, "\t", annealing_score, "\t", best_state.score, "\t", best_state.annealing_score);
+            // OUT(loop, "\t:", score, "\t", custom_score);
+            OUT(loop, "\t:", score, "\t", custom_score, "\t", best_state.score, "\t", best_state.custom_score);
         }
 
-        if (current_annealing_score < annealing_score){
+        if (current_custom_score < custom_score){
             // 改善された場合
             no_update_times=0;
             score = current_score;
-            annealing_score = current_annealing_score;
+            custom_score = current_custom_score;
             // ベスト解
-            if (current_annealing_score<best_state.annealing_score)
+            if (current_custom_score<best_state.custom_score)
                 best_state=state;
             continue;
         }
@@ -366,7 +367,7 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
             // 強制遷移
             no_update_times=0;
             score = current_score;
-            annealing_score = current_annealing_score;
+            custom_score = current_custom_score;
             continue;
         }
         // 温度
@@ -374,11 +375,11 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
         // const double temp = START_TEMP * pow(END_TEMP/START_TEMP, (double) loop / loop_max); // 指数
         // const double temp = START_TEMP + (END_TEMP - START_TEMP) * (double) timer.time() / TIME_LIMIT; // 線形
         // const double temp = START_TEMP * pow(END_TEMP/START_TEMP, (double) timer.time() / TIME_LIMIT); // 指数
-        const double probability = exp((annealing_score-current_annealing_score) / temp);
+        const double probability = exp((custom_score-current_custom_score) / temp);
         if (probability > get_rand()){
             // 温度による遷移
             score = current_score;
-            annealing_score = current_annealing_score;
+            custom_score = current_custom_score;
             continue;
         }
 
@@ -399,9 +400,9 @@ double annealing(ChronoTimer &timer, int loop_max, int verbose){
         }
     }
     if(DEBUG){
-        // OUT("final score:", score, "\t", annealing_score);
+        // OUT("final score:", score, "\t", custom_score);
         // state.print_answer();
-        OUT("final score:", best_state.score, "\t", best_state.annealing_score);
+        OUT("final score:", best_state.score, "\t", best_state.custom_score);
         best_state.print_answer();
     }
     return best_state.score;
@@ -412,11 +413,11 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
     State init;
     init.initialize();
     
-    auto [score, s] = init.calc_score();
-    if(DEBUG) OUT("initial score:", score);
+    auto [score, custom_score] = init.calc_score();
+    if(DEBUG) OUT("initial score:", score, "\t", custom_score);
 
-    // スコアが大きいほど良い
-    vector< MAXPQ<State> > pq(max_turn+1);
+    // カスタムスコアが小さいほど良い
+    vector< MINPQ<State> > pq(max_turn+1);
     pq[0].emplace(init);
     REP(loop, loop_max){
         timer.end();
@@ -436,7 +437,7 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
             }
         }
         if (DEBUG && loop % verbose == 0)
-            OUT(loop, "\t:", pq[max_turn].top().score);
+            OUT(loop, "\t:", pq[max_turn].top().score, "\t", pq[max_turn].top().custom_score);
     }
     return pq[max_turn].top().score;
 }
@@ -446,8 +447,8 @@ double beam_search(int max_turn, int beam_width, int verbose){
     State init;
     init.initialize();
     
-    auto [score, s] = init.calc_score();
-    if(DEBUG) OUT("initial score:", score);
+    auto [score, custom_score] = init.calc_score();
+    if(DEBUG) OUT("initial score:", score, "\t", custom_score);
 
     vector<State> top_states{init};
     REP(turn, max_turn){ // 各ターン
@@ -457,10 +458,10 @@ double beam_search(int max_turn, int beam_width, int verbose){
                 next.calc_score();
                 next_states.emplace_back(next);
             }
-            // スコアが大きいほど良い
-            // RSORT(next_states);
-            partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
-            // nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end(), std::greater<>{});
+            // カスタムスコアが小さいほど良い
+            // SORT(next_states);
+            partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end());
+            // nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end());
 
             // 上位beam_width個に絞る
             if (SZ(next_states)>beam_width)
@@ -468,10 +469,10 @@ double beam_search(int max_turn, int beam_width, int verbose){
         }
         top_states = next_states;
         if (DEBUG && turn % verbose == 0)
-            OUT(turn, "\t:", top_states.front().score);
+            OUT(turn, "\t:", top_states.front().score, "\t", top_states.front().custom_score);
     }
     return top_states.front().score;
-    // return MAX(top_states).score;
+    // return MIN(top_states).score;
 }
 
 const string DATA_DIR = "./data/";
