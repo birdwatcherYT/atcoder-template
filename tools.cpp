@@ -938,6 +938,55 @@ COST min_cost_flow(const vector< vector< tuple<int, CAP, COST> > >& adj, int n, 
     return ans;
 }
 
+// ハンガリアン法 (割当問題)
+// https://en.wikipedia.org/wiki/Hungarian_algorithm を元に修正
+// cost_mat: job x worker (job <= worker)
+// return: コスト, workerからjobへのアサイン (未アサイン: -1)
+template <class T>
+pair<T, VI> hungarian(const vector<vector<T>> &cost_mat) {
+    const int J = SZ(cost_mat), W = SZ(cost_mat[0]);
+    assert(J <= W);
+    // worker -> job (job[W]は番兵)
+    VI job(W + 1, -1);
+    vector<T> ys(J), yt(W + 1);  // potentials
+    // -yt[W] will equal the sum of all deltas
+    const T inf = numeric_limits<T>::max();
+    REP(j_cur, J) {  // assign j_cur-th job
+        int w_cur = W;
+        job[w_cur] = j_cur;
+        // min reduced cost over edges from Z to worker w
+        vector<T> min_to(W + 1, inf);
+        VI prev(W + 1, -1);  // previous worker on alternating path
+        VB in_Z(W + 1, false);    // whether worker is in Z
+        while(job[w_cur] != -1) {   // runs at most j_cur + 1 times
+            in_Z[w_cur] = true;
+            const int j = job[w_cur];
+            T delta = inf;
+            int w_next=-1;
+            REP(w, W) if(!in_Z[w]) {
+                auto tmp = cost_mat[j][w] - ys[j] - yt[w];
+                if(tmp < min_to[w])
+                    min_to[w] = tmp, prev[w] = w_cur;
+                if(min_to[w] < delta)
+                    delta = min_to[w], w_next = w;
+            }
+            // delta will always be non-negative, except possibly during the first time this loop runs if any entries of C[j_cur] are negative
+            for (int w = 0; w <= W; ++w) {
+                if(in_Z[w]) ys[job[w]] += delta, yt[w] -= delta;
+                else min_to[w] -= delta;
+            }
+            w_cur = w_next;
+        }
+        // update assignments along alternating path
+        for(int w; w_cur != W; w_cur = w){
+            w = prev[w_cur];
+            job[w_cur] = job[w];
+        }
+    }
+    job.pop_back();
+    return {-yt[W], job};
+}
+
 // 幅優先で訪問したノードの順番を返す
 template<class T>
 VI bfs(const vector< vector< pair<int, T> > > &adj, int n, int s){ // (隣接, ノード数, 始点)
