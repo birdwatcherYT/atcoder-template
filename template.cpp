@@ -78,6 +78,10 @@ template<class... T> ostream& operator<<(ostream& os, const tuple<T...>& t) {
     os << "("; apply([&os](auto&&... args) {((os << args << ", "), ...);}, t);
     os << ")"; return os;
 }
+template<class T, size_t N> ostream& operator<<(ostream& os, const array<T, N>& ary) {
+    os << "[ "; for ( const T& item : ary ) os << item << ", ";
+    os << "]"; return os;
+}
 template<class T> ostream& operator<<(ostream& os, const vector<T>& vec) {
     os << "[ "; for ( const T& item : vec ) os << item << ", ";
     os << "]"; return os;
@@ -103,6 +107,10 @@ template<class T1, class T2> istream& operator>>(istream& is, pair<T1, T2>& p) {
 }
 template<class... T> istream& operator>>(istream& is, tuple<T...>& t) {
     apply([&is](auto&&... args) {((is >> args), ...);}, t);
+    return is;
+}
+template<class T, size_t N> istream& operator>>(istream& is, array<T, N>& ary) {
+    for ( T& item : ary ) is >> item;
     return is;
 }
 template<class T> istream& operator>>(istream& is, vector<T>& vec) {
