@@ -14,7 +14,8 @@ N_TRIALS = 1000
 STORAGE = "sqlite:///ahc.db"
 STUDY_NAME = "tune_param"
 # プログラム名
-PROGRAM = "./tuning_sample.exe"
+PROGRAM = "tuning_sample.exe" # for windowns
+# PROGRAM = "./tuning_sample.exe" # for mac/linux
 
 
 def run(seed: int, param1: float, param2: float):
