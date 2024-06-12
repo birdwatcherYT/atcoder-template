@@ -484,7 +484,7 @@ double beam_search(int max_turn, int beam_width, int verbose){
     // return MIN(top_states).score;
 }
 
-const string DATA_DIR = "./data/";
+const string INPUT_DIR = "./in/";
 int main() {
     // ios::sync_with_stdio(false);
     // std::cin.tie(nullptr);
@@ -500,7 +500,7 @@ int main() {
             rand_engine.seed(SEED);
             OUT("data_load");
             string filename = to_string_zerofill(i, 4) + ".txt";
-            string file_path = DATA_DIR + filename;
+            string file_path = INPUT_DIR + filename;
             ifstream ifs(file_path);
             assert(!ifs.fail());
             data_load(ifs);
