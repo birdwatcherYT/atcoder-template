@@ -836,7 +836,7 @@ public:
         REP(i, size)
             h.emplace_back(uniform(rand_engine));
     }
-    T hash(const vector<T> &array) {
+    T hash(const vector<int> &array) const {
         T value = 0;
         for(auto e:array)
             value ^= h[e];
