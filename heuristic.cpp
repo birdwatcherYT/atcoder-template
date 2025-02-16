@@ -494,6 +494,7 @@ int main() {
     double sum_score = 0.0;
     double sum_log_score = 0.0;
     int64_t max_time = 0;
+    int argmax_time = -1;
     REP(i, case_num){
         timer.start();
         if (DEBUG){
@@ -514,7 +515,8 @@ int main() {
             auto time = timer.time();
             sum_score += score;
             sum_log_score += log1p(score);
-            max_time = max(max_time, time);
+            if(max_time < time)
+                max_time = time, argmax_time=i;
             OUT("--------------------");
             OUT("case_num: ", i);
             OUT("score: ", score);
@@ -524,6 +526,7 @@ int main() {
             OUT("sum_score: ", sum_score);
             OUT("sum_log_score: ", sum_log_score);
             OUT("max_time: ", max_time);
+            OUT("argmax_time: ", argmax_time);
             OUT("--------------------");
         }
     }
