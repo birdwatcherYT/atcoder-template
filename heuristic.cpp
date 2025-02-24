@@ -248,10 +248,83 @@ public:
     inline int64_t time() const { return chrono::duration_cast<chrono::milliseconds>(end_at - start_at).count(); }// ミリ秒
 };
 
+// テンプレートクラス TopN
+// Compare: std::less<T> で最大値N個管理
+// Compare: std::greater<T> で最小値N個管理
+template <typename T, typename Compare = std::less<T>>
+class TopN {
+public:
+    // コンストラクタ: 管理する要素数 capacity を指定
+    explicit TopN(size_t capacity) : capacity_(capacity) {}
+
+    // emplace による要素追加
+    template <typename... Args>
+    void emplace(Args&&... args) {
+        T value(std::forward<Args>(args)...);
+        if (data_.size() < capacity_) {
+            data_.emplace(std::move(value));
+        } else {
+            auto it = data_.begin();
+            if (comp_(*it, value)) {
+                data_.erase(it);
+                data_.emplace(std::move(value));
+            }
+        }
+    }
+
+    const T& getWorst() const {
+        if (data_.empty()) throw std::runtime_error("TopN: 要素が存在しません");
+        return *data_.begin();
+    }
+
+    const T& getBest() const {
+        if (data_.empty()) throw std::runtime_error("TopN: 要素が存在しません");
+        return *data_.rbegin();
+    }
+
+    void removeWorst() {
+        if (data_.empty()) throw std::runtime_error("TopN: 削除できる要素がありません");
+        data_.erase(data_.begin());
+    }
+
+    void removeBest() {
+        if (data_.empty()) throw std::runtime_error("TopN: 削除できる要素がありません");
+        auto it = std::prev(data_.end());
+        data_.erase(it);
+    }
+
+    // Worst -> Best
+    auto begin() { return data_.begin(); }
+    auto end() { return data_.end(); }
+    auto begin() const { return data_.begin(); }
+    auto end() const { return data_.end(); }
+
+    // Best -> Worst
+    auto rbegin() { return data_.rbegin(); }
+    auto rend() { return data_.rend(); }
+    auto rbegin() const { return data_.rbegin(); }
+    auto rend() const { return data_.rend(); }
+
+    bool empty() const { return data_.empty(); }
+    size_t size() const { return data_.size(); }
+    size_t capacity() const { return capacity_; }
+    void clear() { data_.clear(); }
+
+private:
+    size_t capacity_;
+    std::multiset<T, Compare> data_;
+    Compare comp_{}; // 比較関数オブジェクト。たとえば std::less<T> は a < b の判定を行い、bool を返します。
+};
+
+
+// 時間制限
+constexpr int TIME_LIMIT = 1980;
+// メモ: greedy, DP
 
 // データ
 int N;
 VI init_vec;
+
 void data_load(istream &is){
     // データ読み込み ----------
     is >> N;
@@ -298,10 +371,17 @@ struct State {
         // -----------------
     }
     // ターンがあるような場合
-    vector<State> next_states() const {
+    // vector<State> next_states() const {
+    //     // 未実装
+    //     vector<State> nexts;
+    //     return nexts;
+    // }
+    void next_states(TopN<State,greater<State>> &nexts) const {
         // 未実装
-        vector<State> nexts;
-        return nexts;
+        State s=*this;
+        // sに次のターンの変更を加える
+        s.calc_score();
+        nexts.emplace(s);
     }
     bool operator<(const State& s) const {
         return custom_score < s.custom_score;
@@ -311,10 +391,6 @@ struct State {
     }
 };
 
-// 時間制限
-constexpr int TIME_LIMIT = 1980;
-
-// メモ: greedy, DP
 
 
 double annealing(ChronoTimer &timer, int loop_max, int verbose){
@@ -426,7 +502,9 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
     if(DEBUG) OUT("initial score:", score, "\t", custom_score);
 
     // カスタムスコアが小さいほど良い
-    vector< MINPQ<State> > pq(max_turn+1);
+    // vector< MINPQ<State> > pq(max_turn+1);
+    constexpr int maxsave = 100;
+    vector< TopN<State, greater<State>> > pq(max_turn+1, TopN<State,greater<State>>(maxsave));
     pq[0].emplace(init);
     REP(loop, loop_max){
         timer.end();
@@ -436,19 +514,24 @@ double chokudai_search(ChronoTimer &timer, int loop_max, int max_turn, int choku
             REP(w, chokudai_width){
                 if(pq[turn].empty()) break;
                 // 先頭参照
-                const State &state = pq[turn].top();
-                for(State& next : state.next_states()){
-                    next.calc_score();
-                    pq[turn+1].emplace(next);
-                }
+                // const State &state = pq[turn].top();
+                // for(State& next : state.next_states()){
+                //     next.calc_score();
+                //     pq[turn+1].emplace(next);
+                // }
                 // 先頭削除
-                pq[turn].pop();
+                // pq[turn].pop();
+                const State &state = pq[turn].getBest();
+                state.next_states(pq[turn+1]);
+                pq[turn].removeBest();
             }
         }
         if (DEBUG && loop % verbose == 0)
-            OUT(loop, "\t:", pq[max_turn].top().score, "\t", pq[max_turn].top().custom_score);
+            // OUT(loop, "\t:", pq[max_turn].top().score, "\t", pq[max_turn].top().custom_score);
+            OUT(loop, "\t:", pq[max_turn].getBest().score, "\t", pq[max_turn].getBest().custom_score);
     }
-    return pq[max_turn].top().score;
+    // return pq[max_turn].top().score;
+    return pq[max_turn].getBest().score;
 }
 
 double beam_search(int max_turn, int beam_width, int verbose){
@@ -459,29 +542,34 @@ double beam_search(int max_turn, int beam_width, int verbose){
     auto [score, custom_score] = init.calc_score();
     if(DEBUG) OUT("initial score:", score, "\t", custom_score);
 
-    vector<State> top_states{init};
+    // vector<State> top_states{init};
+    TopN<State,greater<State>> top_states(beam_width);
+    top_states.emplace(init);
     REP(turn, max_turn){ // 各ターン
-        vector<State> next_states;
+        // vector<State> next_states;
+        TopN<State,greater<State>> next_states(beam_width);
         for(const State &state : top_states) {
-            for(State& next : state.next_states()){
-                next.calc_score();
-                next_states.emplace_back(next);
-            }
+            state.next_states(next_states);
+            // for(State& next : state.next_states()){
+            //     next.calc_score();
+            //     next_states.emplace_back(next);
+            // }
             // カスタムスコアが小さいほど良い
             // SORT(next_states);
-            partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end());
+            // partial_sort(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end());
             // nth_element(next_states.begin(), next_states.begin() + min(beam_width, SZ(next_states)), next_states.end());
-
-            // 上位beam_width個に絞る
-            if (SZ(next_states)>beam_width)
-                next_states.resize(beam_width);
+            // // 上位beam_width個に絞る
+            // if (SZ(next_states)>beam_width)
+            //     next_states.resize(beam_width);
         }
         top_states = next_states;
         if (DEBUG && turn % verbose == 0)
-            OUT(turn, "\t:", top_states.front().score, "\t", top_states.front().custom_score);
+            // OUT(turn, "\t:", top_states.front().score, "\t", top_states.front().custom_score);
+            OUT(turn, "\t:", top_states.getBest().score, "\t", top_states.getBest().custom_score);
     }
-    return top_states.front().score;
+    // return top_states.front().score;
     // return MIN(top_states).score;
+    return top_states.getBest().score;
 }
 
 const string INPUT_DIR = "./in/";
